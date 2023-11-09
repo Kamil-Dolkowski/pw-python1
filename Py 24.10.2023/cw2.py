@@ -1,0 +1,6 @@
+imie=input("Podaj imie: ")
+nazwisko=input("Podaj nazwisko: ")
+#print(f"Witaj, {imie}!")
+#print(f"Witaj, " + imie + "!")
+print("Witaj, {0} {1}!" .format(imie,nazwisko))
+print("Witaj, {1} {0}!" .format(imie,nazwisko))
