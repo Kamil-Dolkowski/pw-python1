@@ -89,6 +89,7 @@ x = re.search(r"^nasz", kot, re.IGNORECASE)
 print(x)
 
 
+
 tel = "Mój numer to 623-456-7890."
 x = re.search(r"\d{3}-\d{3}-\d{4}",tel)    
 print(x)
@@ -104,3 +105,6 @@ print(x)
 text = "Odwiedź https://www.example.com i http://www.anotherdomain.org."
 domain_names = re.findall(r'https?://www\.(\w+)', text)
 print(domain_names)
+
+
+
