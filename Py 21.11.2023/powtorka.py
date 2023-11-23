@@ -17,6 +17,7 @@
 
 
 
+
 # Napisz program obliczający wskaźnik masy ciała (BMI) na podstawie wzrostu i wagi użytkownika.
 
 # bmi = waga / (wzrost ** 2)
