@@ -20,7 +20,6 @@ def display_phonebook():
 def validate_number(phone_number:str ):
     return len(phone_number) == 9 and phone_number.isdigit()
 
-
 def add_entry(name:str, phone_number:str ):
     if not phone_number.isdigit() or len(phone_number) != 9:
         print("Invalid phone number.")
@@ -38,7 +37,6 @@ def remove_entry(phone_number):
     #       new_list.append(entry)
     # save_phonebook(new_list)
             
-
 def modify_entry(old_phone_number, new_name, new_phone_number):
     if not validate_number(new_phone_number):
         print("Invalid phone number.")
@@ -50,6 +48,7 @@ def modify_entry(old_phone_number, new_name, new_phone_number):
             save_phonebook(lista)
             print("Save")
             return True
+
 
 
 while True:
