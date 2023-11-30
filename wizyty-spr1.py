@@ -106,7 +106,7 @@ while True:
         print("Available hours: ")
         print(t)
     elif command == "-e":
-            break
+        break
 
 
 

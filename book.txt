@@ -1,4 +1,1 @@
-Kamil jest super
-Nowa linijka.
-Nowa linijka.
-
+['aaa; 987654321']
