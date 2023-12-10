@@ -39,13 +39,13 @@
 #   (działania)
 # return phonebook
 
-from datetime import datetime
-from datetime import timedelta
+# from datetime import datetime
+# from datetime import timedelta
 
 
-visit = ['aaa','aaa','12:15']
-time = datetime.strptime('13:00',"%H:%M")
-time_old = datetime.strptime(visit[2],"%H:%M")
+# visit = ['aaa','aaa','12:15']
+# time = datetime.strptime('13:00',"%H:%M")
+# time_old = datetime.strptime(visit[2],"%H:%M")
 
 # if time_old < time:
 #     delt = time - time_old
@@ -61,12 +61,12 @@ time_old = datetime.strptime(visit[2],"%H:%M")
 # visit[2] = appointments
 
 
-x= 412.4
-print(round(x,-1))
+# x= 412.4
+# print(round(x,-1))
 
-a = 5
-b = 6
-l = [1,2,3,4]
-l.extend([a,b])
-print(l)
+# a = 5
+# b = 6
+# l = [1,2,3,4]
+# l.extend([a,b])
+# print(l)
 
