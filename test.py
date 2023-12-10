@@ -52,11 +52,21 @@ time_old = datetime.strptime(visit[2],"%H:%M")
 # else:
 #     delt = time_old - time
 
-if time in range(time_old, time_old + timedelta(hours=1)):
-    print("nie")
-else:
-    print("tak")
+# if time in range(time_old, time_old + timedelta(hours=1)):
+#     print("nie")
+# else:
+#     print("tak")
 
 
 # visit[2] = appointments
+
+
+x= 412.4
+print(round(x,-1))
+
+a = 5
+b = 6
+l = [1,2,3,4]
+l.extend([a,b])
+print(l)
 
