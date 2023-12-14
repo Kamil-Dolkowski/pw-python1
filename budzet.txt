@@ -1,0 +1,15 @@
+wydatek;1000.10
+przychod;200.50
+wydatek;1000.10
+przychod;200.50
+wydatek;1000.10
+przychod;200.50
+wydatek;1000.10
+przychod;200.50
+wydatek;1000.10
+przychod;200.50
+wydatek;1000.10
+przychod;200.50
+wydatek;1000.10
+przychod;200.50
+przychod;25.50
