@@ -125,18 +125,6 @@
 #192.168.128.1
 
 # def validate_ip(ip):
-#     sekcje=ip.split('.')
-#     print(sekcje)
-#     czy_liczby=(sekcje[x].isdigit() for x in sekcje)
-#     # czy_zakres=(sekcje[x])
-#     return czy_liczby
-
-# ip='111.111.111.111'
-#źle^
-
-
-# #dobrze\/
-# def validate_ip(ip):
 #     parts=ip.split('.')
 #     if len(parts) !=4:
 #         return False
