@@ -17,7 +17,7 @@ def load(file_path):
                 budget_type, amount = line.strip().split(";")
                 budget.append([budget_type, amount])
     else:
-        print("Plik nie istnieje.")
+        print("\nPlik nie istnieje.")
     return budget
 
 def show_history(file_path):
