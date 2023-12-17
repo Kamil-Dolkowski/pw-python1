@@ -14,8 +14,8 @@ w = float(input("Podaj w[rad/s] (omega): "))
 
 T = (2*numpy.pi)/w
 
-Emax = B*S*w*numpy.sin(w*T/4)
-Emin = -B*S*w*numpy.sin(w*T/4)
+Emax = B*S*w
+Emin = -B*S*w
 
 print(f"\nEmax: {round(Emax,2)} V")
 print(f"Emin: {round(Emin,2)} V")
@@ -47,8 +47,8 @@ w1 = float(input("Podaj w[rad/s] (omega): "))
 
 T1 = (2*numpy.pi)/w1
 
-E1max = B1*S1*w1*numpy.sin(w1*T1/4)
-E1min = -B1*S1*w1*numpy.sin(w1*T1/4)
+E1max = B1*S1*w1
+E1min = -B1*S1*w1
 
 print(f"\nEmax: {round(E1max,2)} V")
 print(f"Emin: {round(E1min,2)} V")
