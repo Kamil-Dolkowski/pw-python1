@@ -1,18 +1,12 @@
 # wydatek/przychód; kwota
-# wydatek ;200 
+# wydatek; 200 
 import os
 
 FILENAME = "budzet.txt"
 
-def validate_budget_type(budget_type):
-    return budget_type == 'wydatek' or budget_type == 'przychod'
-
-def validate_amount(amount: str):
-    return amount.isdigit()
 
 def is_file_exists(file_path):
     return os.path.isfile(file_path)
-
 
 
 def load(file_path):
@@ -23,21 +17,25 @@ def load(file_path):
                 budget_type, amount = line.strip().split(";")
                 budget.append([budget_type, amount])
     else:
-        print("File not exists.")
+        print("Plik nie istnieje.")
     return budget
 
 def show_history(file_path):
     budget = load(file_path)
     print("\n-----HISTORIA-----")
-    for many in budget:
-        print(f"{many[0]}: {many[1]} zł")
+    for record in budget:
+        print(f"{record[0]}: {record[1]} zł")
 
 def add(file_path,budget_type,amount):
     budget = load(file_path)
-    if validate_budget_type(budget_type) and is_file_exists(file_path):
-        with open(file_path, "a") as file:
-            file.write(f"{budget_type};{amount}\n")
-        return
+    budget.append([budget_type,amount])
+    save(file_path, budget)
+    
+def save(file_path, budget):
+    if is_file_exists(file_path):
+        with open(file_path, "w") as file:
+            for i in budget:
+                file.write(f"{i[0]};{i[1]}\n")
 
 def statistics(file_path):
     budget = load(file_path)
@@ -50,21 +48,66 @@ def statistics(file_path):
         elif i[0] == 'przychod':
             suma_przychodow += float(i[1])
     bilans = suma_przychodow + suma_wydatkow
+    
+    suma_wydatkow = "%2.2f" % suma_wydatkow
+    suma_przychodow = "%2.2f" % suma_przychodow
+    bilans = "%2.2f" % bilans
 
-    print("\n----STATYSTYKI----")
-    print(f"Przychody: {round(suma_przychodow,2)} zł")
-    print(f"Wydatki: {round(suma_wydatkow,2)} zł")
-    print(f"Bilans: {round(bilans,2)} zł")
+    print("\n----PODSUMOWANIE----")
+    print(f"Przychody: {suma_przychodow} zł")
+    print(f"Wydatki: {suma_wydatkow} zł")
+    print(f"Bilans: {bilans} zł")
     return suma_przychodow, suma_wydatkow, bilans
 
+
+
+print("------POLECENIA------")
+print("-h   historia transakcji")
+print("-d   dodaj transakcję")
+print("-p   podsumowanie")
+
 while True:
-    command = input("Enter command: ")
+    command = input("\nWprowadź polecenie: ")
     if command == '-h':
-        print("-h   help")
+        show_history(FILENAME)
+    elif command == '-d':
+        print("")
+        budget_type = input("Podaj rodzaj transakcji (przychod/wydatek): ")
+        if budget_type == 'przychod' or budget_type == 'wydatek':
+            amount = input("Podaj kwotę: ")
+            try:
+                amount = float(amount)
+                amount = "%2.2f" % amount
+                add(FILENAME, budget_type, amount)
+                print(f"\nDodano do budżetu: {budget_type}, {amount} zł")
+            except ValueError:
+                print("Błędny zapis kwoty.")
+        else:
+            print("Błędny zapis rodzaju transakcji. (przychod/wydatek)")
+        
+    elif command == '-p':
+        statistics(FILENAME)
+    else:
+        break
 
 
 
-show_history(FILENAME)
-statistics(FILENAME)
-add(FILENAME,'przychod','25.50')
-show_history(FILENAME)
+
+# Zadanie 1: Kalkulator Budżetu Domowego
+# Cel: Napisz program do zarządzania budżetem domowym. Program powinien umożliwić dodawanie wydatków i przychodów, przechowywać je w pliku i generować podsumowanie budżetu.
+# Funkcje:
+# - Dodawanie wydatku/przychodu.
+# - Zapisywanie danych do pliku.    
+# - Odczytywanie danych z pliku.    
+# - Generowanie podsumowania (np. łącznych wydatków i przychodów).  
+# - Wyświetlanie historii transakcji.   
+    
+
+
+
+# def add(file_path,budget_type,amount):
+#     budget = load(file_path)
+#     if is_file_exists(file_path):
+#         with open(file_path, "a") as file:
+#             file.write(f"{budget_type};{amount}\n")
+#     return
