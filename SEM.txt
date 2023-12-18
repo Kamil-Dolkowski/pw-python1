@@ -1,0 +1,20 @@
+------Wykres 1-----
+
+Podaj B[T]: 0.5    
+Podaj S[m^2]: 1
+Podaj w[rad/s] (omega): 300
+
+Emax: 150.0 V
+Emin: -150.0 V
+T: 0.021 s
+
+
+-----Wykres 2-----
+
+Podaj B[T]: 0.5
+Podaj S[m^2]: 1
+Podaj w[rad/s] (omega): 900
+
+Emax: 450.0 V
+Emin: -450.0 V
+T: 0.007 s

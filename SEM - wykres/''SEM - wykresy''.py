@@ -31,8 +31,9 @@ print("")
 # oś X
 l = int(z*numpy.pi/(T/4)) + (z*numpy.pi%(T/4)>0)
 
+zaokr = 3
 tick_pos = [i*(T/4) for i in range(0,l+1)]
-labels = [round(i*(T/4),2) for i in range(0,l+1)]
+labels = [round(i*(T/4),zaokr) for i in range(0,l+1)]
 
 plt.xticks(tick_pos, labels)
 
