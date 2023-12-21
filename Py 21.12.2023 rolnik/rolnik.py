@@ -53,3 +53,4 @@ def main():
 
 if __name__ == '__main__':      # zabezpieczenie w razie wywołania modułu -> main się nie wykona
     main()
+    a
