@@ -120,3 +120,6 @@ print(str(person))
 # zmienne prywatne i zmienne silnie prywatne
 # hermetyzacja
 # set'ery get'ery
+
+
+a
