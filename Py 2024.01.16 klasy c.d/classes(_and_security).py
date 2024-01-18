@@ -122,4 +122,3 @@ print(str(person))
 # set'ery get'ery
 
 
-a
