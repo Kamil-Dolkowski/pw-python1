@@ -26,6 +26,8 @@ def dane_z_nip(nip: int, date:str):
 
     except TypeError:
         print("\nBrak informacji.")
+    except KeyError:
+        print("\nBrak informacji.")
 
 def validate_nip(nip):
     if len(nip) != 10:
