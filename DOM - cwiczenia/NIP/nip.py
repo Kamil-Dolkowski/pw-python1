@@ -28,6 +28,8 @@ def dane_z_nip(nip: int, date:str):
         print("\nBrak informacji.")
     except KeyError:
         print("\nBrak informacji.")
+        message = response.json()["message"]
+        print(message)
 
 def validate_nip(nip):
     if len(nip) != 10:
