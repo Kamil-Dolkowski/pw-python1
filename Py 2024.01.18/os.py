@@ -2,7 +2,7 @@ import os
 
 print(os.getcwd())
 
-os.chdir("//eos/STUDENTs$/334531/Desktop/Python/Py 2024.01.18")
+# os.chdir("//eos/STUDENTs$/334531/Desktop/Python/Py 2024.01.18")
 
 print(os.getcwd())
 
