@@ -276,7 +276,7 @@ int main()
 
 #---------------------------GRA W STATKI----------------------------
 
-Niedokończone
+[Niedokończone]
 
 
 #include <stdio.h>
@@ -285,7 +285,7 @@ Niedokończone
 
 int main() 
 {
-    int i, j, v, x, suma1=0, t1[3][4], t2[3][4];
+    int i, j, v, x, y, wynik1, wynik2, suma1=0, t1[3][4], t2[3][4];
     srand(time(NULL));
     
     //komputer
@@ -302,6 +302,7 @@ int main()
     
     //czlowiek
     suma1 = 0;
+    printf("Wpisz pola 0/1:\n");
     while (suma1 != 5) {
         for (j=0; j<3; j++) {
             for (i=0; i<4; i++) {
@@ -328,6 +329,29 @@ int main()
                 printf("%d ", t2[j][i]);
             }
             printf("\n");
+    }
+    
+    while(wynik1 || wynik2 == 5) {
+        //gracz
+        printf("Podaj pole [][]:\n");
+        scanf("%d",&x);
+        scanf("%d",&y);
+        if (t1[x][y] == 1) {
+            printf("Trafienie\n");
+            wynik2++;
+        } else {
+            printf("Pudlo\n");
+        }
+        
+        //Komputer
+        x = rand();
+        y = rand();
+        if (t1[x][y] == 1) {
+            printf("Trafienie (komputer)\n");
+            wynik1++;
+        } else {
+            printf("Pudlo (komputer)\n");
+        }
     }
     
     
