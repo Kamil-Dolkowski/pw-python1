@@ -1,4 +1,4 @@
-# Sortowanie przez scalanie.
+# Sortowanie przez scalanie 0.1
 
 def join_sort(a,b):
     t = []
