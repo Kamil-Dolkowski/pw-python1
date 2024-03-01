@@ -1,0 +1,1 @@
+przeczytać wszystko na następne zajęcia !!!
