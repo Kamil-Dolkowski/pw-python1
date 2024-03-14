@@ -175,5 +175,21 @@ int main()
     return 0;
 }
 
+#------------------------------------------PODSUMOWANIE-------------------------------------------
+
+Deque - szybkie dodawanie/usuwanie na obu końcach; losowy dostęp                    (kolejki, bufory, gdy potzrebny jest szybki dostęp do obu końców)
+List - szybkie wstawianie i usuwanie w dowolnym miejscu; dwukierunkowe iteracje     (lista zadań, gdzie często wstawiamy/usuwamy elementy)
+Map - pary klucz-wartość; unikalne klucze; automatyczne sortowanie                  (słowniki, cache, gdy kluczowe jest szybkie wyszukiwanie)
+Set - unikalne elementy; automatyczne sortowanie; operacje na zbiorach              (unikalne zestawy danych; szybkie sprawdzanie obecności)
+
+
+vector i deque - szybki dostęp do elementów przez indeks; operacje dodaw/usuw na końcach
+list           - wydajność dla wstaw/usuw w dowolnym miejscu
+map i set      - przechowywanie i wyszukiwanie unikalnych elementów z automatycznym sortowaniem
+
 #-------------------------------------------------------------------------------------------------
 
+**
+urządzenia zarządzalne - 
+
+active directory - definiuje użytkowników i narzędzia, które mogą funkcjonować w danej sieci wewnętrznej
