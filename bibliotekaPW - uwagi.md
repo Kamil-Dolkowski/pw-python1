@@ -1,0 +1,17 @@
+# Bazy danych - uwagi:
+-pisać po angielsku (ew. bez polskich znaków)
+-nazwy kolumn jako rzeczowniki
+-te same nazwy łączące tabele
+-trzymanie się konwencji
+-PRIMARY KEY -> SERIAL (= int + increment)
+-FOREIGN KEY -> INT
+-wydzielanie [lista zamknięta] do kolejnych tabel
+-status/pokaz/ukryj (pokaz/ukryj -> boolean, status -/> boolean)
+-varchar - warto określić parametr/długość/ograniczenie     [login/haslo -> nadać typ, te same dlugosci]
+-NOT NULL
+-normalizacja
+-godzinyOtwarcia - różne godziny dla różnych bibliotek
+-CREATE TABLE IF NOT EXISTS
+-indeksy na kolumnach, które są najczęściej wykorzystywane
+-widok zmaterializowany
+-widoki
