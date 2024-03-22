@@ -32,16 +32,13 @@ int main(void) {
                 printf("Podaj imie: ");
                 scanf("%s",imie_z);
                 imie = malloc(sizeof(char)*strlen(imie_z));
-                for (int i=0;i<strlen(imie_z);i++) {
-                    imie[i] = imie_z[i];
-                }
+                imie=imie_z;
                 
                 printf("Podaj nazwisko: ");
                 scanf("%s",nazwisko_z);
                 nazwisko = malloc(sizeof(char)*strlen(nazwisko_z));
-                for (int i=0;i<strlen(nazwisko_z);i++) {
-                    nazwisko[i] = nazwisko_z[i];
-                }
+                nazwisko = nazwisko_z;
+                
                 
                 liczbaUczniow++;
                 uczniowie_nowi = malloc((sizeof(char)+sizeof(char)+sizeof(int))*liczbaUczniow);
