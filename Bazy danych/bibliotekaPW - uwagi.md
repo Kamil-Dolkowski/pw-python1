@@ -15,3 +15,4 @@
 -indeksy na kolumnach, które są najczęściej wykorzystywane
 -widok zmaterializowany
 -widoki
+-snake_case
