@@ -37,7 +37,7 @@ int main(int argc, char ** argv) {
 
       printMin(tab, args, 1);
       //printMin(tab, 7);
-      free(args[0].value);
+      arguments_destructor(args[0]);
 		}
 	} else if (argc == 6) {
 		if (!strcmp(argv[1], "inRange")){
