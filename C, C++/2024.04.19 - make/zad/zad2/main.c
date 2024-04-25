@@ -12,7 +12,7 @@
 int main(int argc, char ** argv) {
 	           //0  1  2  3  4  5  6
 	int tab[] = {5, 1, 2, 7, 3, 4, 6};
-  int len;
+    int len;
 	char bufferMain[32];
 
 	if (argc == 1) {
@@ -34,9 +34,6 @@ int main(int argc, char ** argv) {
 */
       //args[0] = arguments_constructor("size", INT, dataStr)
       args[0] = arguments_constructor("size", INT, "7");
-
-
-     printf("%s %d %s\n", args[0].name, args[0].type, args[0].value);
 
       printMin(tab, args, 1);
       //printMin(tab, 7);
@@ -60,32 +57,26 @@ int main(int argc, char ** argv) {
 			struct argument args[5];
                         char * buffer;
 		
+		    // data tab size
+			args[0] = arguments_constructor("size", INT, "7");
 			// inRange min
-			args[0] = arguments_constructor("min", INT, "1");
-
+			args[1] = arguments_constructor("min", INT, argv[2]);
 			// inRange max
-			args[1] = arguments_constructor("max", INT, "4");
+			args[2] = arguments_constructor("max", INT, argv[3]);
 			// inRange minInclude
-		        args[2] = arguments_constructor("min", BOOL, "T");
+		    args[3] = arguments_constructor("min", BOOL, argv[4]);
 			// inRange maxInclude
-			args[3] = arguments_constructor("max", BOOL, "T");
-
-			// data tab size
-			args[4] = arguments_constructor("size", INT, "7");
-
-			 printf("%s %d %s\n", args[0].name, args[0].type, args[0].value);
-
-      			 printf("%s %d %s\n", args[1].name, args[1].type, args[1].value);
-			 printf("%s %d %s\n", args[2].name, args[2].type, args[2].value);
-
-		        printInRange(tab, args, 5);
+			args[4] = arguments_constructor("max", BOOL, argv[5]);
+			
+			
+		    printInRange(tab, args, 5);
 			//printInRange(tab, min, max, minInclude, maxInclude);
 			
-			free(args[0].value);  //argument_destructor(args[0]);
-			free(args[1].value);
-			free(args[2].value);
-			free(args[3].value);
-			free(args[4].value);
+			arguments_destructor(args[0]);  //argument_destructor(args[0]);
+			arguments_destructor(args[1]);
+			arguments_destructor(args[2]);
+			arguments_destructor(args[3]);
+			arguments_destructor(args[4]);
 		}
 	}
 	return EXIT_SUCCESS;

@@ -21,3 +21,9 @@ struct argument arguments_constructor(char * name, enum ArgType type, char * dat
 
     return arg;
 }
+
+
+void arguments_destructor(struct argument args) {
+    free(args.value);
+    //printf("zwolniono pamięć\n");
+}
