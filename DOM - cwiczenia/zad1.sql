@@ -181,8 +181,6 @@ END;
 --    Stwórz trigger, który po zmianie zamówienia aktualizuje stan magazynowy produktów w tabeli Production.ProductInventory.
 
 
-???
-
 USE AdventureWorks2019;
 GO
 
@@ -193,9 +191,45 @@ AS
 BEGIN
 	IF (UPDATE(ProductID) OR UPDATE(OrderQty))
 		BEGIN
-			UPDATE 
+			DECLARE @ProductID INT;
+			SELECT @ProductID = i.ProductID FROM inserted i
+
+			DECLARE @Roznica INT;
+
+			DECLARE @X INT;
+			DECLARE @Y INT;
+
+
+			SELECT @X = d.OrderQty FROM deleted d WHERE ProductID = @ProductID
+			SELECT @Y = i.OrderQty FROM inserted i WHERE ProductID = @ProductID
+
+			SELECT @Roznica = @X - @Y;
+
+			UPDATE Production.ProductInventory
+			SET Quantity = Quantity + @Roznica
+			WHERE ProductID = @ProductID
 		END;
 END;
+
+
+
+
+--------------------------------------
+
+UPDATE Sales.SalesOrderDetail
+SET OrderQty = 4
+WHERE SalesOrderID = 43659 and SalesOrderDetailID = 1
+
+SELECT * FROM Sales.SalesOrderDetail
+WHERE SalesOrderID = 43659 and SalesOrderDetailID = 1
+
+
+SELECT * FROM Production.ProductInventory WHERE ProductID = 876
+
+
+UPDATE Production.ProductInventory
+SET Quantity = 10
+WHERE ProductID = 876
 
 
 --8. Trigger archiwizujący dane klientów:
