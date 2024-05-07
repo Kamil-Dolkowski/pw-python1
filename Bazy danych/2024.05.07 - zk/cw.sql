@@ -84,12 +84,14 @@ USE AdventureWorks2019;
 GO
 
 CREATE PROCEDURE AktualizujStanMagazynowy
-	@ProduktID
-	@LokacjaID
-	@Ilosc
+	@ProduktID INT,
+	@LokacjaID INT,
+	@Ilosc INT
 AS
 BEGIN
-	UPDATE FROM Production.ProductInventory WHERE ProductID = @ProduktID, 
+	UPDATE Production.ProductInventory 
+	SET Quantity = @Ilosc
+	WHERE ProductID = @ProduktID AND LocationID = @LokacjaID
 END;
 
 
