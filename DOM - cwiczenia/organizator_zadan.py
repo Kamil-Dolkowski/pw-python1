@@ -367,6 +367,7 @@ while True:
         taskId = int(input("Podaj identyfikator: "))
         searchPrintTask(taskId, task)
     elif choice == '-u':
+        print("AKTUALIZACJA ZADANIA:")
         taskId = int(input("Podaj identyfikator: "))
         whatToChange = input("Podaj, co chcesz zmienić [description/ priority/ realiseDate]: ")
         newData = input("Podaj, na co chcesz zmienić: ")
@@ -388,6 +389,14 @@ while True:
         break
         
 
+
+# UWAGI:
+# -brak walidacji wprowadzanych danych
+# -brak rotacji w drzewie
+
+
+
+#-----------------------------------------------------
 
 # Walidacja:
 
