@@ -149,7 +149,7 @@ def updateTask(taskId, whatToChange, newData, task):
 def deleteTask(taskId, task):
     if not isTask(task):
         print(f"Brak zadań.")
-        return False
+        return task
     
     
     if taskId == task.taskId:
