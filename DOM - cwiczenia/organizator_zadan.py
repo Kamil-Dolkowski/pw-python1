@@ -32,6 +32,7 @@ class Node:
 
 task = Node
 
+
 # 1. Dodawanie Zadań:
 def addTask(taskId, description, priority, realiseDate):
     global task
@@ -66,11 +67,6 @@ def isTask(task):
         return False
     
 
-
-
-
-
-
 # 2. Wyszukiwanie Zadań:
 def searchPrintTask(taskId, task):
     if not isTask(task):
@@ -92,8 +88,6 @@ def searchPrintTask(taskId, task):
             print(f"Brak zadania o identyfikatorze: {taskId}.")
             return 
         searchPrintTask(taskId, task.right)
-    
-
 
 def searchTask(taskId, task):
     if not isTask(task):
@@ -141,56 +135,123 @@ def updateTask(taskId, whatToChange, newData, task):
         updateTask(taskId, whatToChange, newData, task.right)
 
 
-
-
-
-
-# 4. Usuwanie Zadań:     ???
+# 4. Usuwanie Zadań:
 def deleteTask(taskId, task):
     if not isTask(task):
-        print(f"Brak zadań.")
+        print("Brak zadań.\n")
         return task
     
-    
+    # korzeń
     if taskId == task.taskId:
-        print(task.right)
-        print(task.left)
-        # brak liści
+        # brak liści I
         if task.left == None and task.right == None:
-            print("Usuń koniec")
             del task
             task = Node
+            print("Usunięto zadanie.\n")
             return task
-        # są liście
-        if task.left.taskId < task.right.taskId:
-            print("są liście: l < p")
-            task.taskId = task.left.taskId
-            task.description = task.left.description
-            task.priority = task.left.priority
-            task.realiseDate = task.left.realiseDate
+        # jest 1 liść II
+        elif task.left == None:
+            task = task.right
+            print("Usunięto zadanie.\n")
+            return task
+        elif task.right == None:
+            task = task.left
+            print("Usunięto zadanie.\n")
+            return task
+        # są 2 liście III
+        else:
+            rightSide = task.right
             task.left = task.left.left
-            print(task.right.taskId)
-            printTask(task)
-            printTask(task.right)
 
+            if isTask(task.right):   # czy task ma coś po prawej stronie
+                maxRightTask = maxRight(task)
+                maxRightTask.right = rightSide
+            else:
+                task.right = rightSide
+
+            print("Usunięto zadanie.\n")
+            return task
+        
+    # lewa strona
+    if isTask(task.left):
+        if taskId == task.left.taskId:
+            # brak liści I
+            if task.left.left == None and task.left.right == None:
+                del task.left
+                task.left = None
+                print("Usunięto zadanie.\n")
+                return task
+            # jest 1 liść II
+            if task.left.right == None: 
+                task.left = task.left.left
+                print("Usunięto zadanie.\n")
+                return task
+            if task.left.left == None:
+                task.left = task.left.right
+                print("Usunięto zadanie.\n")
+                return task
+            # są 2 liście III
+            rightSide = task.left.right     # rightSide - prawa gałąź od usuwanego elementu 
+            task.left = task.left.left
+
+            if isTask(task.left.right):   # czy task.left ma coś po prawej stronie
+                maxRightTask = maxRight(task.left)
+                maxRightTask.right = rightSide
+            else:
+                task.left.right = rightSide
+            print("Usunięto zadanie.\n")
+            return task
+
+    # prawa strona
+    if isTask(task.right):
+        if taskId == task.right.taskId:
+            # brak liści I
+            if task.right.left == None and task.right.right == None:
+                del task.right
+                task.right = None
+                print("Usunięto zadanie.\n")
+                return task
+            # jest 1 liść II
+            if task.right.right == None: 
+                task.right = task.right.left
+                print("Usunięto zadanie.\n")
+                return task
+            if task.right.left == None:
+                task.right = task.right.right
+                print("Usunięto zadanie.\n")
+                return task
+            # są 2 liście III
+            rightSide = task.right.right
+            task.right = task.right.left
+
+            if isTask(task.right.right):   # czy task.right.right ma coś po prawej stronie
+                maxRightTask = maxRight(task.right)
+                maxRightTask.right = rightSide
+            else:
+                task.right.right = rightSide
+            print("Usunięto zadanie.\n")
+            return task
+
+    # brak takiego zadania 
+    if task.left == None and task.right == None:
+        print("Nie znaleziono zadania do usunięcia.\n")
         return task
-            
 
-
-
-    elif taskId < task.taskId:
+    if taskId < task.taskId:
         task.left = deleteTask(taskId, task.left)
+        return task
     else:
         task.right = deleteTask(taskId, task.right)
-
-    print("Koniec")
-    # printTask(task)
-    # printTask(task.left)
-    # printTask(task.left.right)
+        return task
+    
+def maxRight(task):
+    if isTask(task.right):
+        maxRightTask = maxRight(task.right)
+        return maxRightTask
     return task
 
-
     
+
 def height(node):
     # Jeśli węzeł jest pusty, zwracamy -1, co oznacza brak węzła
     if node is None:
@@ -205,12 +266,25 @@ def height(node):
 
 #-----------------------------------
 
-def printTask(task):
+def printTaskObj(task):
     print(f"\n=====Analiza:=====")
     print(f"task.taskId: {task.taskId}")
     print(f"task.left: {task.left}")
     print(f"task.right: {task.right}\n")
     
+def printTask(task):
+    if isTask(task):
+        print(f"\n=====Analiza:=====")
+        print(f"task.taskId: {task.taskId}")
+        if isTask(task.left):
+            print(f"task.left: {task.left.taskId}")
+        else:
+            print(f"task.left: {task.left}")
+        if isTask(task.right):
+            print(f"task.right: {task.right.taskId}")
+        else:
+            print(f"task.right: {task.right}")
+
 def getIdList(task):
     idList = []
     
@@ -236,37 +310,43 @@ def printCommands():
 
 #----------------------------------------
 
+# addTask(7, 'opis3', 1, '2024-05-23')
 # addTask(4, 'opis3', 1, '2024-05-23')
+# addTask(5, 'opis2', 1, '2024-05-22')
+# addTask(6, 'opis2', 1, '2024-05-22')
+# addTask(2, 'opis1', 1, '2024-05-21')
 # addTask(1, 'opis3', 1, '2024-05-23')
+# addTask(3, 'opis3', 1, '2024-05-23')
+# addTask(10, 'opis2', 1, '2024-05-22')
+# addTask(11, 'opis1', 1, '2024-05-21')
+# addTask(9, 'opis3', 1, '2024-05-23')
+# addTask(8, 'opis3', 1, '2024-05-23')
+# print(f"idList = {getIdList(task)}\n")
 
-# searchPrintTask(4, task)
-# addTask(2, 'opis2', 1, '2024-05-22')
 # printTask(task)
-# addTask(10, 'opis1', 1, '2024-05-21')
-# printTask(task)
-# printTask(task.left)
-# addTask(5, 'opis3', 1, '2024-05-23')
-# printTask(task)
-# printTask(task.left)
-# printTask(task.right)
 
+def printTree(task):
+    printTask(task)
+    printTask(task.left)
+    printTask(task.left.right)
+    printTask(task.left.left)
+    printTask(task.left.left.right)
+    printTask(task.left.left.left)
+    printTask(task.left.right.right)
+    printTask(task.left.right.left)
 
-addTask(5, 'opis3', 1, '2024-05-23')
-addTask(2, 'opis3', 1, '2024-05-23')
-addTask(3, 'opis2', 1, '2024-05-22')
-addTask(1, 'opis2', 1, '2024-05-22')
-# addTask(10, 'opis1', 1, '2024-05-21')
-# addTask(5, 'opis3', 1, '2024-05-23')
-print(f"idList = {getIdList(task)}\n")
+    printTask(task.right)
+    printTask(task.right.left)
+    printTask(task.right.right)
+    printTask(task.right.right.left)
+    printTask(task.right.right.right)
+    printTask(task.right.left.left)
+    printTask(task.right.left.right)
 
-task = deleteTask(1, task)
-printTask(task)
-printTask(task.left)
-print(f"\nidList = {getIdList(task)}\n")
 
 #----------------------------------------------------------
 
-# printCommands()
+printCommands()
 
 while True:
     choice = input("--Podaj polecenie: ")
@@ -293,7 +373,10 @@ while True:
         print("")
         updateTask(taskId, whatToChange, newData, task)
     elif choice == '-d':
-        pass
+        print("USUWANIE ZADANIA:")
+        taskId = int(input("Podaj identyfikator: "))
+        print("")
+        task = deleteTask(taskId, task)
     elif choice == '-i':
         print("LISTA IDENTYFIKATORÓW ZADAŃ:")
         print(f"idList = {getIdList(task)}\n")
