@@ -274,7 +274,7 @@ def printTaskObj(task):
     
 def printTask(task):
     if isTask(task):
-        print(f"\n=====Analiza:=====")
+        print(f"=====Analiza:=====")
         print(f"task.taskId: {task.taskId}")
         if isTask(task.left):
             print(f"task.left: {task.left.taskId}")
@@ -283,7 +283,7 @@ def printTask(task):
         if isTask(task.right):
             print(f"task.right: {task.right.taskId}")
         else:
-            print(f"task.right: {task.right}")
+            print(f"task.right: {task.right}\n")
 
 def getIdList(task):
     idList = []
@@ -308,11 +308,27 @@ def printCommands():
     print("-e   zakonczenie programu")
     print("")
 
+
+def rightRotation(task):
+    leftTask = task.left
+    task.left = leftTask.right
+    leftTask.right = task
+    task = leftTask
+    return task
+
+def leftRotation(task):
+    rightTask = task.right
+    task.right = rightTask.left
+    rightTask.left = task
+    task = rightTask
+    return task
+
+
 #----------------------------------------
 
-# addTask(7, 'opis3', 1, '2024-05-23')
-# addTask(4, 'opis3', 1, '2024-05-23')
-# addTask(5, 'opis2', 1, '2024-05-22')
+addTask(7, 'opis3', 1, '2024-05-23')
+addTask(4, 'opis3', 1, '2024-05-23')
+addTask(5, 'opis2', 1, '2024-05-22')
 # addTask(6, 'opis2', 1, '2024-05-22')
 # addTask(2, 'opis1', 1, '2024-05-21')
 # addTask(1, 'opis3', 1, '2024-05-23')
@@ -326,23 +342,31 @@ def printCommands():
 # printTask(task)
 
 def printTree(task):
-    printTask(task)
-    printTask(task.left)
-    printTask(task.left.right)
-    printTask(task.left.left)
-    printTask(task.left.left.right)
-    printTask(task.left.left.left)
-    printTask(task.left.right.right)
-    printTask(task.left.right.left)
+    try:
+        printTask(task)
+        printTask(task.left)
+        printTask(task.left.right)
+        printTask(task.left.left)
+        printTask(task.left.left.right)
+        printTask(task.left.left.left)
+        printTask(task.left.right.right)
+        printTask(task.left.right.left)
+    except AttributeError:
+        pass
+    try:
+        printTask(task.right)
+        printTask(task.right.left)
+        printTask(task.right.right)
+        printTask(task.right.right.left)
+        printTask(task.right.right.right)
+        printTask(task.right.left.left)
+        printTask(task.right.left.right)
+    except AttributeError:
+        pass
 
-    printTask(task.right)
-    printTask(task.right.left)
-    printTask(task.right.right)
-    printTask(task.right.right.left)
-    printTask(task.right.right.right)
-    printTask(task.right.left.left)
-    printTask(task.right.left.right)
-
+task = rightRotation(task)
+task = leftRotation(task)
+printTree(task)
 
 #----------------------------------------------------------
 
