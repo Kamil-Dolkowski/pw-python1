@@ -162,7 +162,7 @@ def deleteTask(taskId, task):
         # są 2 liście III
         else:
             rightSide = task.right
-            task.left = task.left.left
+            task = task.left
 
             if isTask(task.right):   # czy task ma coś po prawej stronie
                 maxRightTask = maxRight(task)
