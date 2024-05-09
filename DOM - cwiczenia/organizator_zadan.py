@@ -359,7 +359,6 @@ def bilans_(task):
 def balans(task):
     leftHeight = height(task.left) 
     rightHeight = height(task.right) 
-    print(f"{leftHeight} {rightHeight}")
     if abs(leftHeight - rightHeight) > 1:
         if leftHeight > rightHeight:
             # LL
@@ -372,11 +371,11 @@ def balans(task):
                 task = rightRotation(task)
                 return task
         elif leftHeight < rightHeight:
-            #PP
+            # PP
             if height(task) == 2 and isTask(task.right.right):
                 task = leftRotation(task)
                 return task
-            #PL
+            # PL
             if height(task) == 2 and isTask(task.right.left):
                 task.right = rightRotation(task.right)
                 task = leftRotation(task)
@@ -492,7 +491,7 @@ while True:
         taskId = int(input("Podaj identyfikator: "))
         print("")
         task = deleteTask(taskId, task)
-        # task = balans(task)
+        task = balans(task)
     elif choice == '-i':
         print("LISTA IDENTYFIKATORÓW ZADAŃ:")
         print(f"idList = {getIdList(task)}\n")
@@ -509,7 +508,7 @@ while True:
 
 # UWAGI:
 # -brak walidacji wprowadzanych danych
-# -błędy po balansie drzewa (po usunięciu węzła)
+# -problemy w balansie (dziwne działanie)
 
 
 
