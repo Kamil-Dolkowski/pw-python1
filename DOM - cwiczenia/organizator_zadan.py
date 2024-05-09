@@ -78,6 +78,7 @@ def searchPrintTask(taskId, task):
         print(f"Opis: {task.description}")
         print(f"Priorytet: {task.priority}")
         print(f"Planowany termin wykonania: {task.realiseDate}\n")
+        # printTask(task)       ## Dane o sąsiadach tego węzła
     elif taskId < task.taskId:
         if not isTask(task.left):
             print(f"Brak zadania o identyfikatorze: {taskId}.")
@@ -305,6 +306,7 @@ def printCommands():
     print("-u   zaktualizuj zadanie")
     print("-d   usun zadanie")
     print("-i   lista identyfikatorów zadań")
+    print("-p   wydrukuj drzewo zadań")
     print("-e   zakonczenie programu")
     print("")
 
@@ -324,16 +326,119 @@ def leftRotation(task):
     return task
 
 
+
+
+# rozprostowanie drzewa
+def bilans1(task):
+    if isTask(task.left):
+        task = rightRotation(task)
+        task = bilans1(task)
+    if isTask(task.right):
+        task.right = bilans1(task.right)
+    
+    return task
+
+def bilansNumber(n):
+    x = n + 1
+
+# Algorytm DSW
+def bilans_(task):
+    # rozprostowanie drzewa
+    task = bilans1(task)
+    n = height(task) + 1
+    print(f"n = {n}")
+    x = n + 1
+    x = 2 << 1
+    print(x)
+
+    return task
+
+
+
+# drzewo AVL
+def balans(task):
+    leftHeight = height(task.left) 
+    rightHeight = height(task.right) 
+    print(f"{leftHeight} {rightHeight}")
+    if abs(leftHeight - rightHeight) > 1:
+        if leftHeight > rightHeight:
+            # LL
+            if height(task) == 2 and isTask(task.left.left):
+                task = rightRotation(task)
+                return task
+            # LP
+            if height(task) == 2 and isTask(task.left.right):
+                task.left = leftRotation(task.left)
+                task = rightRotation(task)
+                return task
+        elif leftHeight < rightHeight:
+            #PP
+            if height(task) == 2 and isTask(task.right.right):
+                task = leftRotation(task)
+                return task
+            #PL
+            if height(task) == 2 and isTask(task.right.left):
+                task.right = rightRotation(task.right)
+                task = leftRotation(task)
+                return task
+            
+    if isTask(task.left):
+        task.left = balans(task.left)
+    if isTask(task.right):
+        task.right = balans(task.right)
+
+    return task
+            
+
+
+def printTree(task):
+    printTask(task)
+    try:
+        printTree(task.left)
+    except AttributeError:
+        pass
+    try:
+        printTree(task.right)
+    except AttributeError:
+        pass
+
 #----------------------------------------
 
 addTask(7, 'opis3', 1, '2024-05-23')
+print("7")
+task = balans(task)
+printTree(task)
 addTask(4, 'opis3', 1, '2024-05-23')
+print("4")
+task = balans(task)
+printTree(task)
 addTask(5, 'opis2', 1, '2024-05-22')
-# addTask(6, 'opis2', 1, '2024-05-22')
-# addTask(2, 'opis1', 1, '2024-05-21')
-# addTask(1, 'opis3', 1, '2024-05-23')
-# addTask(3, 'opis3', 1, '2024-05-23')
-# addTask(10, 'opis2', 1, '2024-05-22')
+print("5")
+task = balans(task)
+printTree(task)
+addTask(6, 'opis2', 1, '2024-05-22')
+print("6")
+task = balans(task)
+printTree(task)
+addTask(2, 'opis1', 1, '2024-05-21')
+print("2")
+task = balans(task)
+printTree(task)
+
+addTask(1, 'opis3', 1, '2024-05-23')
+print("1")
+task = balans(task)
+printTree(task)
+addTask(3, 'opis3', 1, '2024-05-23')
+print("3")
+task = balans(task)
+printTree(task)
+addTask(10, 'opis2', 1, '2024-05-22')
+print("10")
+task = balans(task)
+printTree(task)
+
+
 # addTask(11, 'opis1', 1, '2024-05-21')
 # addTask(9, 'opis3', 1, '2024-05-23')
 # addTask(8, 'opis3', 1, '2024-05-23')
@@ -341,31 +446,15 @@ addTask(5, 'opis2', 1, '2024-05-22')
 
 # printTask(task)
 
-def printTree(task):
-    try:
-        printTask(task)
-        printTask(task.left)
-        printTask(task.left.right)
-        printTask(task.left.left)
-        printTask(task.left.left.right)
-        printTask(task.left.left.left)
-        printTask(task.left.right.right)
-        printTask(task.left.right.left)
-    except AttributeError:
-        pass
-    try:
-        printTask(task.right)
-        printTask(task.right.left)
-        printTask(task.right.right)
-        printTask(task.right.right.left)
-        printTask(task.right.right.right)
-        printTask(task.right.left.left)
-        printTask(task.right.left.right)
-    except AttributeError:
-        pass
 
-task = rightRotation(task)
-task = leftRotation(task)
+
+# task = rightRotation(task)
+# task = leftRotation(task)
+
+# printTree(task)
+# print("---------------------------------")
+# task = balans(task)
+print("=================================")
 printTree(task)
 
 #----------------------------------------------------------
@@ -385,6 +474,7 @@ while True:
         realiseDate = input("Podaj planowany termin wykonania: ")
         
         addTask(taskId, description, priority, realiseDate)
+        task = balans(task)
         print("\nDodano zadanie.\n")
     elif choice == '-s':
         print("SZUKANIE ZADANIA:")
@@ -402,9 +492,12 @@ while True:
         taskId = int(input("Podaj identyfikator: "))
         print("")
         task = deleteTask(taskId, task)
+        # task = balans(task)
     elif choice == '-i':
         print("LISTA IDENTYFIKATORÓW ZADAŃ:")
         print(f"idList = {getIdList(task)}\n")
+    elif choice == '-p':
+        printTree(task)
     elif choice == '-e':
         print("Zakończenie programu.\n")
         break
@@ -416,7 +509,8 @@ while True:
 
 # UWAGI:
 # -brak walidacji wprowadzanych danych
-# -brak rotacji w drzewie
+# -błędy po balansie drzewa (po usunięciu węzła)
+
 
 
 
