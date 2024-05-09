@@ -278,11 +278,11 @@ def printTask(task):
         print(f"=====Analiza:=====")
         print(f"task.taskId: {task.taskId}")
         if isTask(task.left):
-            print(f"task.left: {task.left.taskId}")
+            print(f"task.left: {task.left.taskId}\n")
         else:
-            print(f"task.left: {task.left}")
+            print(f"task.left: {task.left}\n")
         if isTask(task.right):
-            print(f"task.right: {task.right.taskId}")
+            print(f"task.right: {task.right.taskId}\n")
         else:
             print(f"task.right: {task.right}\n")
 
