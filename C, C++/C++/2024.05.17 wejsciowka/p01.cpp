@@ -12,14 +12,14 @@ void foo(int &a){
 }
 
 int main(){
-srand(time(NULL));
-int a = 3;
+  srand(time(NULL));
+  int a = 3;
 
-foo(a);
-// W tym momencie `a` powinno mieć wartość zmienioną o losową
-// liczbę z przedziału [1,10], a więc powinno być
-// w zakresie [4, 13]
-cout << a << endl;
+  foo(a);
+  // W tym momencie `a` powinno mieć wartość zmienioną o losową
+  // liczbę z przedziału [1,10], a więc powinno być
+  // w zakresie [4, 13]
+  cout << a << endl;
 
-return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
