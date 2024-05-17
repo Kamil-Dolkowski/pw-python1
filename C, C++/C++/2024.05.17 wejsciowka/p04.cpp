@@ -19,6 +19,7 @@ public:
 class B {
 private:
   int z;
+  //A aB;
 public:
   int v;
   A aB;
