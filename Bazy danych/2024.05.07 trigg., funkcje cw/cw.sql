@@ -104,14 +104,69 @@ SELECT * FROM Production.ProductInventory
 --4. Trigger automatycznie aktualizujący datę modyfikacji rekordu:
 --	Stwórz trigger, który automatycznie aktualizuje datę modyfikacji rekordu w tabeli HumanResources.Employee za każdym razem, gdy zostanie zmieniony jakikolwiek rekord.
 
+USE AdventureWorks2019;
+GO
+
+CREATE TRIGGER AktualizacjaDatyModyfikacjiRekordu
+ON HumanResources.Employee
+AFTER UPDATE, INSERT
+AS
+BEGIN
+	UPDATE HumanResources.Employee 
+	SET ModifiedDate = GETDATE()
+	WHERE BusinessEntityID = (SELECT i.BusinessEntityID FROM inserted i)
+END;
 
 
 
 
+--------------------------------------
+
+SELECT * FROM HumanResources.Employee
+
+--zmiana rekordu
+Update HumanResources.Employee
+SET Gender = 'M'
+WHERE BusinessEntityID = 1;
+
+
+
+--??
 --5. Trigger sprawdzający poprawność danych podczas dodawania nowego produktu:
 --	Stwórz trigger, który sprawdza poprawność danych podczas dodawania nowego produktu, np. czy cena produktu jest większa niż 0 i czy nazwa produktu jest unikalna.
 
 
+use AdventureWorks2019;
+GO
+
+CREATE TRIGGER SprawdzPoprawnoscDanych
+ON Production.Product
+AFTER INSERT
+AS
+BEGIN
+	IF (SELECT i.StandardCost FROM inserted i) <= 0
+	BEGIN
+		ROLLBACK;
+	END;
+	IF (SELECT count(p.Name) FROM Production.Product p JOIN inserted i ON i.ProductID = p.ProductID WHERE p.Name = i.Name) > 1 
+	BEGIN
+		ROLLBACK;
+	END;
+END;
 
 
+
+---------------------------------------------------------
+SELECT * FROM Production.Product
+
+SELECT count(p.Name) FROM Production.Product p 
+WHERE p.Name = 'Blade'
+
+SET IDENTITY_INSERT Production.Product ON;
+insert into Production.Product (ProductID,Name,StandardCost,ProductNumber,SafetyStockLevel,ReorderPoint,ListPrice,DaysToManufacture,SellStartDate)
+VALUES (1000,'Blade1',10,'AABA',1000,750,0,1,GETDATE())
+SET IDENTITY_INSERT Production.Product OFF;
+
+DELETE FROM Production.Product 
+WHERE ProductID = 1000
 
