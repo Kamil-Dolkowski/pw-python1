@@ -104,34 +104,47 @@ class BinarySearchTree:
         return current_node
 
 
-    def reservation_list(self):
+    def all_reservations(self):
         node = self.root
+        reservations = self.all_reservations_(node)
+
+        for reservation in reservations:
+            self.reservation_info(reservation)
+
+        return reservations
+
+    def all_reservations_(self, node: Node):
+        result = []
 
         if node.left:
-            add = reservation_list(node.left)
-            return reservation_list.extend(add)
+            left = self.all_reservations_(node.left)
+            result.extend(left)
+        result.append(node.reservation_id)
         if node.right:
-            add = reservation_list(node.right)
-            return reservation_list.extend(add)
+            right = self.all_reservations_(node.right)
+            result.extend(right)
         if not node.left and not node.right:
-            return node.reservation_id
+            return [node.reservation_id]
 
-        return reservation_list
-    
-    def reservation_list_(self, node: Node):
-        reservation_list = []
-        node = self.root
+        return result
 
-        if node.left:
-            add = reservation_list(node.left)
-            return reservation_list.extend(add)
-        if node.right:
-            add = reservation_list(node.right)
-            return reservation_list.extend(add)
-        if not node.left and not node.right:
-            return node.reservation_id
 
-        return reservation_list
+
+    # def all_reservations_(self, node: Node):
+    #     if node.left is None and node.right is None:
+    #         return node.reservation_id
+
+    #     if node.left is not None:
+    #         left = self.all_reservations_(node.left)
+    #     if node.right is not None:   
+    #         right = self.all_reservations_(node.right)
+
+    #     if node.left is not None and node.right is None:
+    #         return left + [node.reservation_id]
+    #     if node.left is None and node.right is not None:
+    #         return right + [node.reservation_id]
+
+    #     return [left] + [node.reservation_id] + [right]
 
 
 
@@ -139,7 +152,7 @@ class BinarySearchTree:
         found = self.find(reservation_id)
         print(f"id rezerwacji: {reservation_id}")
         print(f"imię i nazwisko pasażera: {found.passenger_name}")
-        print(f"data lotu: {found.flight_date}")
+        print(f"data lotu: {found.flight_date}\n")
 
 
 
@@ -156,6 +169,9 @@ bst = BinarySearchTree()
 bst.insert(100, "John Dee", "2023-10-05")
 bst.insert(101, "Jane Dee", "2023-10-05")
 bst.insert(99, "Alice Dee", "2023-10-05")
+bst.insert(97, "Alice Dee", "2023-10-05")
+bst.insert(98, "Alice Dee", "2023-10-05")
+bst.insert(96, "Alice Dee", "2023-10-05")
 
 # Wyszukanie rezerwacji
 found = bst.find(100)
@@ -166,6 +182,7 @@ else:
 
 # Anulowanie rezerwacji
 cancel = bst.delete(100)
-print(f"Anulowano rezerwację {cancel}")
+print(f"Anulowano rezerwację {cancel}\n")
 
-bst.reservation_list()
+print(f"Lista id wszystkich rezerwacji: \n{bst.all_reservations()}")
+
