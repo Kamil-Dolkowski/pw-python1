@@ -385,7 +385,6 @@ int main(int argc, char ** argv) {
     plik.close();
 
     //-------------------OPERACJE NA DANYCH Z PLIKU-----------------------
-    //przedzialy godzinowe [X,X)
 
     //showParametersIndex(timestamp, u, i, 0, 3);
     //showParametersHours(timestamp, u, i, "10:30", "10:45");
@@ -409,10 +408,10 @@ int main(int argc, char ** argv) {
                         avg(timestamp, u, i, interval);
                     }
                 } else {
-                    cout << "\nBledna nazwa parametru 'm'.\n" << endl;
-                    cout << "Mozliwe wywolanie: " << endl;
-                    cout << "program.exe -t m[dzielnik liczby 60]" << endl;
-                    cout << "Np.: program.exe -t m30" << endl;
+                    cout << "\nInvalid parameter 'm'.\n" << endl;
+                    cout << "Possible call: " << endl;
+                    cout << "program.exe -t m[factor of 60]" << endl;
+                    cout << "Example: program.exe -t m30" << endl;
                 }
             } else {
                 cout << "Brak takiego polecenia." << endl;
@@ -423,12 +422,60 @@ int main(int argc, char ** argv) {
 }
 
 
+//przedzialy czasowe [X,X):
+
 //co 30 min:
 //14:00:00 - 14:29:59    ->   14:00-14:30
 //14:30:00 - 14:59:59    ->   14:30-15:00
 
+//-----------------------------------------------------------------------------------------
 
 //Problemy:
 //-dane w pliku musza byc uporzadkowane od najwczesniejszego do najpozniejszego pomiaru
 //-data musi byc poprawnie zapisana (brak pelnej walidacji daty)
 
+
+//Do poprawy:
+//-jezyk wyswietlany podczas pracy programu (errory po angielsku, program po polsku) 
+//  (czy zmienic na calosc po polsku ?)
+//  ( [error "Brak takiego polecenia.", error "Plik nie istnieje"] sa po polsku, a inne errory sa po angielsku)
+
+
+//Error: Niepoprawna skladnia danych w pliku. Linia: 3, Kolumna: 10-15
+
+
+/*
+cout << "Error: Invalid data in file. ";
+cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
+
+cout << "Error: Niepoprawna skladnia danych w pliku. ";
+cout << "Linia: " << errorLine << ", Kolumna: " << index + 1 << "-" << index + 6 << endl;
+*/
+
+/*
+cout << "Error: Invalid number of arguments.\n" << endl;
+cout << "[program.exe -t PARAMETER] " << endl;
+cout << "PARAMETER ::= h / m30 / m5" << endl;
+
+cout << "Error: Niepoprawna liczba argumentow.\n" << endl;
+cout << "[program.exe -t PARAMETER] " << endl;
+cout << "PARAMETER ::= h / m30 / m5" << endl;
+*/
+
+/*
+cout << "\nBledna nazwa parametru 'm'.\n" << endl;
+cout << "Mozliwe wywolanie: " << endl;
+cout << "program.exe -t m[dzielnik liczby 60]" << endl;
+cout << "Np.: program.exe -t m30" << endl;
+
+cout << "\nInvalid parameter 'm'.\n" << endl;
+cout << "Possible call: " << endl;
+cout << "program.exe -t m[factor of 60]" << endl;
+cout << "Example: program.exe -t m30" << endl;
+*/
+
+/*
+cout << "Brak takiego polecenia." << endl;
+
+cout << "No such command." << endl;
+*/
