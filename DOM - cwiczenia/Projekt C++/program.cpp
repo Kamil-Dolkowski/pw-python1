@@ -391,35 +391,34 @@ int main(int argc, char ** argv) {
     //showParametersHours(timestamp, u, i, "10:30", "10:45");
 
     if (argc != 3) {
-        cout << "Error: Invalid number of arguments. " << endl;
+        cout << "Error: Invalid number of arguments.\n" << endl;
         cout << "[program.exe -t PARAMETER] " << endl;
         cout << "PARAMETER ::= h / m30 / m5" << endl;
-    }
+    } else {
+        string arg1 = argv[1];
+        string arg2 = argv[2];
 
-    string arg1 = argv[1];
-    string arg2 = argv[2];
+        if (arg1 == "-t") {
+            if (arg2 == "h") {
+                avg(timestamp, u, i, 60);
+            } else if (arg2[0] == 'm') {
+                if (arg2.length() > 1 && arg2.length() < 4 && isDigit(arg2.substr(1,2))) {
+                    int interval = stoi(arg2.substr(1,2));
 
-    if (arg1 == "-t") {
-        if (arg2 == "h") {
-            avg(timestamp, u, i, 60);
-        } else if (arg2[0] == 'm') {
-            if (arg2.length() > 1 && arg2.length() < 4 && isDigit(arg2.substr(1,2))) {
-                int interval = stoi(arg2.substr(1,2));
-
-                if (isFactorOf60(interval)) {
-                    avg(timestamp, u, i, interval);
+                    if (isFactorOf60(interval)) {
+                        avg(timestamp, u, i, interval);
+                    }
+                } else {
+                    cout << "\nBledna nazwa parametru 'm'.\n" << endl;
+                    cout << "Mozliwe wywolanie: " << endl;
+                    cout << "program.exe -t m[dzielnik liczby 60]" << endl;
+                    cout << "Np.: program.exe -t m30" << endl;
                 }
             } else {
-                cout << "\nBledna nazwa parametru 'm'.\n" << endl;
-                cout << "Mozliwe wywolanie: " << endl;
-                cout << "program.exe -t m[dzielnik liczby 60]" << endl;
-                cout << "Np.: program.exe -t m30" << endl;
+                cout << "Brak takiego polecenia." << endl;
             }
-        } else {
-            cout << "Brak takiego polecenia." << endl;
         }
     }
-
 	return EXIT_SUCCESS;
 }
 
