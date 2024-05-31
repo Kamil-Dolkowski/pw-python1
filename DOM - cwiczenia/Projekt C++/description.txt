@@ -1,0 +1,31 @@
+Napisać program przetwarzający dane pochodzące z pliku, gdzie każdy wiersz jest następującej postaci:
+
+DATA ::= '{"timestamp_server": "' TIMESTAMP '", "data": {' DATA_SEQUENCE '}}'
+DATA_SEQUENCE ::= MEASUREMENT[,MEASUREMENT]
+MEASUREMENT ::= '"' TIMESTAMP '":{"U":' NUMBER ',"I": ' NUMBER '}'
+                np.: "20240522094639":{"U":19.57,"I": 0.1 }
+TIMESTAMP ::= data i czas w formacie YYYYMMDDHHmmSS, np.: 20240522094655
+NUMBER ::= liczba rzeczywista zapisana w formacie ab.cd gdzie a, b, c, d to cyfry dziesiętne, przy czym jeśli a lub d jest równe zero (0) to nie jest taka cyfra zapisywana
+
+Przykład wiersza:
+
+{"timestamp_server": "20240522094655", "data": {"20240522094639":{"U":19.57,"I": 0.1 },"20240522094640":{"U":19.59,"I": 0.21},"20240522094641":{"U": 6.99,"I": 0.53},"20240522094642":{"U": 7.48,"I": 0.6 },"20240522094643":{"U": 7.06,"I": 0.57},"20240522094644":{"U": 7.21,"I": 0.6 },"20240522094645":{"U": 6.77,"I": 0.64},"20240522094646":{"U": 7.17,"I": 0.67},"20240522094647":{"U": 7.37,"I": 0.64},"20240522094648":{"U": 7.33,"I": 0.57},"20240522094649":{"U": 6.59,"I": 0.74},"20240522094650":{"U": 7.42,"I": 0.57},"20240522094651":{"U": 6.81,"I": 0.67},"20240522094652":{"U": 6.59,"I": 0.64},"20240522094653":{"U": 6.74,"I": 0.6 },"20240522094654":{"U": 7.21,"I": 0.57},"20240522094655":{"U": 7.17,"I": 0.64},"20240522094656":{"U": 7.17,"I": 0.67},"20240522094657":{"U": 6.7 ,"I": 0.6 },"20240522094658":{"U": 7.44,"I": 0.6 },"20240522094659":{"U": 7.17,"I": 0.57},"20240522094700":{"U": 7.17,"I": 0.64},"20240522094701":{"U": 7.3 ,"I": 0.57},"20240522094702":{"U": 6.63,"I": 0.64},"20240522094703":{"U": 7.08,"I": 0.64},"20240522094704":{"U": 7.08,"I": 0.6 },"20240522094705":{"U": 7.08,"I": 0.53},"20240522094706":{"U": 7.06,"I": 0.6 },"20240522094708":{"U": 7.08,"I": 0.57},"20240522094709":{"U": 7.03,"I": 0.6 }}}
+
+TIMESTAMP przypisany do klucza `timestamp_server` nas nie interesuje - jest to czas gdy `DATA_SEQUENCE` zostało przesłane na serwer i na nim zapisane.
+
+Interesuje nas TIMESTAMP przypisany do MEASUREMENT. Każdy MEASUREMENT określa pomiar pewnych wartości w pewnym momencie czasu. Na przykład:
+
+"20240522094639":{"U":19.57,"I": 0.1 }
+
+to pomiar jaki miał miejsce 22 maja 2024 o godzinie 9:46:39 a jego wartości to:
+- napięcie [U]: 19.57
+- natężenie [I]: 0.1
+
+W każdym wierszu może być różna liczba elementów MEASUREMENT.
+
+Zadanie polega na napisaniu programu, który w zależności od sposobu uruchomienia policzy:
+- średnią napięcia i natężenia w każdej godzinie, jeśli uruchomiony jako: program.exe -t h
+- średnią napięcia i natężenia co 30 minut (a więc po dwie wartości w każdej godzinie), jeśli uruchomiony jako: program.exe -t m30
+- średnią napięcia i natężenia co 5 minut (a więc po dwanaście wartości w każdej godzinie), jeśli uruchomiony jako: program.exe -t m5
+
+Uwaga: Zadanie można rozwiązać pisząc nie jeden, ale kilka programów. Na przykład pierwszy program wczytuje plik, wstępnie go obrabia a dopiero drugi liczy to co trzeba.
