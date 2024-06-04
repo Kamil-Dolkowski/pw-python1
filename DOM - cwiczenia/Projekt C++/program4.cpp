@@ -6,7 +6,7 @@
 using namespace std;
 
 #define FILE "solar_panel_data_20240522.json"
-//#define FILE "plik2.txt"
+//#define FILE "plik1.txt"
 
 
 bool isDigit(string text) {
@@ -240,14 +240,6 @@ void showParametersHours(vector < string > timestamp, vector < double > u, vecto
 
 }
 
-void deleteMeasurements(unsigned int &countMeasurements, vector<string> &timestamp, vector<double> &u, vector<double> &i) {
-    for (int x=0; x<countMeasurements; x++) {
-        timestamp.pop_back();
-        u.pop_back();
-        i.pop_back();
-    }
-}
-
 
 
 //===================================================MAIN==========================================================
@@ -268,8 +260,6 @@ int main(int argc, char ** argv) {
 
     string arg1;
     string arg2;
-
-    unsigned int countMeasurements=0;
 
     //-------------SPRAWDZENIE POPRAWNOSCI PODANYCH PARAMETROW--------------
 
@@ -355,7 +345,6 @@ int main(int argc, char ** argv) {
 
 
             index += 10;
-            countMeasurements = 0;
             //poszczegolne pomiary
             while (1) {
 
@@ -367,7 +356,6 @@ int main(int argc, char ** argv) {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
                     errorCount++;
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
                     break;
                 }
                 timestamp.push_back(fragment);
@@ -381,7 +369,6 @@ int main(int argc, char ** argv) {
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 8 << endl;
                     errorCount++;
                     timestamp.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
                     break;
                 }
 
@@ -394,7 +381,6 @@ int main(int argc, char ** argv) {
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
                     errorCount++;
                     timestamp.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
                     break;
                 }
                 u.push_back(stod(fragment));
@@ -409,7 +395,6 @@ int main(int argc, char ** argv) {
                     errorCount++;
                     timestamp.pop_back();
                     u.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
                     break;
                 }
 
@@ -423,11 +408,9 @@ int main(int argc, char ** argv) {
                     errorCount++;
                     timestamp.pop_back();
                     u.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
                     break;
                 }
                 i.push_back(stod(fragment));
-                countMeasurements++;
 
                 //3. sprawdzam czy koniec pomiaru lub koniec wiersza
                 index += 5;
@@ -444,7 +427,6 @@ int main(int argc, char ** argv) {
                         cout << "Error: Invalid data in file. ";
                         cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 4 << endl;
                         errorCount++;
-                        deleteMeasurements(countMeasurements, timestamp, u, i);
                         break;
                     }
                 }
@@ -508,4 +490,4 @@ int main(int argc, char ** argv) {
 //-data musi byc poprawnie zapisana (brak pelnej walidacji daty)
 
 //Dzialanie:
-//-po wykryciu blednego formatu w pliku ignoruje caly wiersz, w ktorym wystapil blad
+//-po wykryciu blednego formatu w pliku reszta danych w wierszu jest pomijana

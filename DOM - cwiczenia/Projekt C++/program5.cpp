@@ -6,7 +6,7 @@
 using namespace std;
 
 #define FILE "solar_panel_data_20240522.json"
-//#define FILE "plik2.txt"
+//#define FILE "plik1.txt"
 
 
 bool isDigit(string text) {
@@ -240,14 +240,142 @@ void showParametersHours(vector < string > timestamp, vector < double > u, vecto
 
 }
 
-void deleteMeasurements(unsigned int &countMeasurements, vector<string> &timestamp, vector<double> &u, vector<double> &i) {
-    for (int x=0; x<countMeasurements; x++) {
-        timestamp.pop_back();
-        u.pop_back();
-        i.pop_back();
-    }
-}
 
+void nextLineInCurrentLine(string &wierszDanych, unsigned int &index, vector<string> &timestamp, vector<double> &u, vector<double> &i, unsigned int &errorLine, unsigned int &errorCount) {
+    string fragment;
+
+    while (1) {
+        index = wierszDanych.find("{\"timestamp_server\": \"", index);
+
+        if (index == -1) {
+            return;
+        }
+        
+        //1. sprawdzam "timestamp_server"  |  {"timestamp_server": "
+        fragment = wierszDanych.substr( index, 22 );
+    
+        if (fragment != "{\"timestamp_server\": \"") {
+            cout << "Error: Invalid data in file. ";
+            cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 23 << endl;
+            errorCount++;
+            continue;
+        }
+    
+        //1.1 sprawdzam timestamp dla "timestamp_server"
+        index += 22;
+        fragment = wierszDanych.substr( index, 14 );
+    
+        if (!isTimestamp(fragment)) {
+            cout << "Error: Invalid data in file. ";
+            cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
+            errorCount++;
+            continue;
+        }
+    
+        //2. sprawdzam "data"  |  ", "data": {"
+        index += 14;
+        fragment = wierszDanych.substr( index, 13 );
+    
+        if (fragment != "\", \"data\": {\"") {
+            cout << "Error: Invalid data in file. ";
+            cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 14 << endl;
+            errorCount++;
+            continue;
+        }
+    
+
+        index += 10;
+        //poszczegolne pomiary
+        while (1) {
+    
+            //2.1 sprawdzam wartosc timestamp dla "data"
+            index += 3;
+            fragment = wierszDanych.substr( index, 14 );
+    
+            if (!isTimestamp(fragment)) {
+                cout << "Error: Invalid data in file. ";
+                cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
+                errorCount++;
+                break;
+            }
+            timestamp.push_back(fragment);
+    
+            //2.2 sprawdzam "U" dla "data"  |  ":{"U":
+            index += 14;
+            fragment = wierszDanych.substr( index, 7 );
+    
+            if (fragment != "\":{\"U\":") {
+                cout << "Error: Invalid data in file. ";
+                cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 8 << endl;
+                errorCount++;
+                timestamp.pop_back();
+                break;
+            }
+    
+            //2.3 sprawdzam wartosc "U" dla "data"
+            index += 7;
+            fragment = wierszDanych.substr( index, 5 );
+    
+            if (!isDoubleAB_CD(fragment)) {
+                cout << "Error: Invalid data in file. ";
+                cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
+                errorCount++;
+                timestamp.pop_back();
+                break;
+            }
+            u.push_back(stod(fragment));
+    
+            //2.4 sprawdzam "I" dla "data"  |  ,"I":
+            index += 5;
+            fragment = wierszDanych.substr( index, 5 );
+    
+            if (fragment != ",\"I\":") {
+                cout << "Error: Invalid data in file. ";
+                cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
+                errorCount++;
+                timestamp.pop_back();
+                u.pop_back();
+                break;
+            }
+    
+            //2.5 sprawdzam wartosc "I" dla "data"
+            index += 5;
+            fragment = wierszDanych.substr( index, 5 );
+    
+            if (!isDoubleAB_CD(fragment)) {
+                cout << "Error: Invalid data in file. ";
+                cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
+                errorCount++;
+                timestamp.pop_back();
+                u.pop_back();
+                break;
+            }
+            i.push_back(stod(fragment));
+    
+            //3. sprawdzam czy koniec pomiaru lub koniec wiersza
+            index += 5;
+            fragment = wierszDanych.substr( index, 3 );
+    
+            //3.a) czy koniec pomiaru
+            if (fragment != "},\"") {
+                //3.b) czy koniec wiersza
+                fragment = wierszDanych.substr( index, wierszDanych.length()-index );
+                if (fragment == "}}}"){
+                //koniec wiersza
+                break;
+                } else {
+                    cout << "Error: Invalid data in file. ";
+                    cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 4 << endl;
+                    errorCount++;
+                    break;
+                }
+            }
+            //kolejny pomiar
+        }
+        //kolejny "wiersz" w tym samym wierszu
+    }
+
+}
 
 
 //===================================================MAIN==========================================================
@@ -268,8 +396,6 @@ int main(int argc, char ** argv) {
 
     string arg1;
     string arg2;
-
-    unsigned int countMeasurements=0;
 
     //-------------SPRAWDZENIE POPRAWNOSCI PODANYCH PARAMETROW--------------
 
@@ -328,6 +454,7 @@ int main(int argc, char ** argv) {
                 cout << "Error: Invalid data in file. ";
                 cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 23 << endl;
                 errorCount++;
+                nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                 continue;
             }
 
@@ -339,6 +466,7 @@ int main(int argc, char ** argv) {
                 cout << "Error: Invalid data in file. ";
                 cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
                 errorCount++;
+                nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                 continue;
             }
 
@@ -350,12 +478,12 @@ int main(int argc, char ** argv) {
                 cout << "Error: Invalid data in file. ";
                 cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 14 << endl;
                 errorCount++;
+                nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                 continue;
             }
 
 
             index += 10;
-            countMeasurements = 0;
             //poszczegolne pomiary
             while (1) {
 
@@ -367,7 +495,7 @@ int main(int argc, char ** argv) {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
                     errorCount++;
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
+                    nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                     break;
                 }
                 timestamp.push_back(fragment);
@@ -381,7 +509,7 @@ int main(int argc, char ** argv) {
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 8 << endl;
                     errorCount++;
                     timestamp.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
+                    nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                     break;
                 }
 
@@ -394,7 +522,7 @@ int main(int argc, char ** argv) {
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
                     errorCount++;
                     timestamp.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
+                    nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                     break;
                 }
                 u.push_back(stod(fragment));
@@ -409,7 +537,7 @@ int main(int argc, char ** argv) {
                     errorCount++;
                     timestamp.pop_back();
                     u.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
+                    nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                     break;
                 }
 
@@ -423,11 +551,10 @@ int main(int argc, char ** argv) {
                     errorCount++;
                     timestamp.pop_back();
                     u.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
+                    nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                     break;
                 }
                 i.push_back(stod(fragment));
-                countMeasurements++;
 
                 //3. sprawdzam czy koniec pomiaru lub koniec wiersza
                 index += 5;
@@ -444,7 +571,7 @@ int main(int argc, char ** argv) {
                         cout << "Error: Invalid data in file. ";
                         cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 4 << endl;
                         errorCount++;
-                        deleteMeasurements(countMeasurements, timestamp, u, i);
+                        nextLineInCurrentLine(wierszDanych, index, timestamp, u, i, errorLine, errorCount);
                         break;
                     }
                 }
@@ -467,9 +594,11 @@ int main(int argc, char ** argv) {
 
     if (errorCount != 0) {
         char choice;
+
         cout << endl;
         cout << "Uwaga: Liczba bledow w pliku: " << errorCount << ". Czy chcesz kontynuowac? Y/N" << endl;
         cin >> choice;
+
         switch (choice) {
             case 'Y':
                 //zostanie wykonana dalsza czesc programu
@@ -508,4 +637,5 @@ int main(int argc, char ** argv) {
 //-data musi byc poprawnie zapisana (brak pelnej walidacji daty)
 
 //Dzialanie:
-//-po wykryciu blednego formatu w pliku ignoruje caly wiersz, w ktorym wystapil blad
+//-po wykryciu blednego formatu w pliku nie ignoruje calego wiersza, w ktorym wystapil blad; szuka natomiast
+// w tym samym wierszu kolejnej poprawnej linii i zapisuje jej dane, dopoki są poprawne

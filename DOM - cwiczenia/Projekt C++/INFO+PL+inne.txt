@@ -1,0 +1,123 @@
+INFO:
+
+program.cpp -> program3.cpp
+program1.cpp -> program 1.0 (wczesna wersja programu, niepełna funkcjonalność)
+program2.cpp -> program 2.0 (jeśli jest błąd w wierszu, to program się kończy)
+program3.cpp -> program 3.0 (jeśli jest błąd w wierszu, to cały wiersz jest pomijany)
+program4.cpp -> program 4.0 (jeśli jest błąd w wierszu, to reszta danych od miejsca błędu w tym wierszu jest pomijana) (dane przed błędem są uwzględniane)
+program5.cpp -> program 5.0 (jeśli jest błąd w wierszu, to jeśli dalsze dane są poprawne, to są one uwzględnione) (następny wiersz w obecnym wierszu)
+
+
+//-------------------------------PL----------------------------------
+
+
+//Do poprawy:
+//-jezyk wyswietlany podczas pracy programu (errory po angielsku, program po polsku) 
+//  (czy zmienic na calosc po polsku ?)
+
+
+
+//Error: Niepoprawna skladnia danych w pliku. Linia: 3, Kolumna: 10-15
+
+
+/*
+cout << "Error: Invalid data in file. ";
+cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
+
+cout << "Error: Niepoprawna skladnia danych w pliku. ";
+cout << "Linia: " << errorLine << ", Kolumna: " << index + 1 << "-" << index + 6 << endl;
+*/
+
+/*
+cout << "Error: Invalid number of arguments.\n" << endl;
+cout << "[program.exe -t PARAMETER] " << endl;
+cout << "PARAMETER ::= h / m30 / m5" << endl;
+
+cout << "Error: Niepoprawna liczba argumentow.\n" << endl;
+cout << "[program.exe -t PARAMETER] " << endl;
+cout << "PARAMETER ::= h / m30 / m5" << endl;
+*/
+
+/*
+cout << "\nBledna nazwa parametru 'm'.\n" << endl;
+cout << "Mozliwe wywolanie: " << endl;
+cout << "program.exe -t m[dzielnik liczby 60]" << endl;
+cout << "Np.: program.exe -t m30" << endl;
+
+cout << "\nInvalid parameter 'm'.\n" << endl;
+cout << "Possible call: " << endl;
+cout << "program.exe -t m[factor of 60]" << endl;
+cout << "Example: program.exe -t m30" << endl;
+*/
+
+/*
+cout << "Brak takiego polecenia." << endl;
+
+cout << "No such command." << endl;
+*/
+
+
+//--------------------------DAWNY KOD-------------------------------
+
+
+        if (arg1 == "-t") {
+            if (arg2 == "h") {
+                //poprawny parametr 'h'
+            } else if (arg2[0] == 'm') {
+                if (arg2.length() > 1 && arg2.length() < 4 && isDigit(arg2.substr(1,2))) {
+                    //poprawny parametr 'm'
+                } else {
+                    cout << "\nInvalid parameter 'm'.\n" << endl;
+                    cout << "Possible call: " << endl;
+                    cout << "program.exe -t m[factor of 60]" << endl;
+                    cout << "Example: program.exe -t m30" << endl;
+                    return EXIT_SUCCESS;
+                }
+            } else {
+                cout << "Error: Command not exists." << endl;
+                return EXIT_SUCCESS;
+            }
+        } else {
+            return EXIT_SUCCESS;
+        }
+
+
+
+
+
+
+
+
+//-------------------------------------------------------------------
+
+
+
+    if (argc != 3) {
+        cout << "Error: Invalid number of arguments.\n" << endl;
+        cout << "[program.exe -t PARAMETER] " << endl;
+        cout << "PARAMETER ::= h / m30 / m5" << endl;
+    } else {
+        string arg1 = argv[1];
+        string arg2 = argv[2];
+
+        if (arg1 == "-t") {
+            if (arg2 == "h") {
+                avg(timestamp, u, i, 60);
+            } else if (arg2[0] == 'm') {
+                if (arg2.length() > 1 && arg2.length() < 4 && isDigit(arg2.substr(1,2))) {
+                    int interval = stoi(arg2.substr(1,2));
+
+                    if (isFactorOf60(interval)) {
+                        avg(timestamp, u, i, interval);
+                    }
+                } else {
+                    cout << "\nInvalid parameter 'm'.\n" << endl;
+                    cout << "Possible call: " << endl;
+                    cout << "program.exe -t m[factor of 60]" << endl;
+                    cout << "Example: program.exe -t m30" << endl;
+                }
+            } else {
+                cout << "Error: Command not exists." << endl;
+            }
+        }
+    }

@@ -6,7 +6,7 @@
 using namespace std;
 
 #define FILE "solar_panel_data_20240522.json"
-//#define FILE "plik2.txt"
+//#define FILE "plik.txt"
 
 
 bool isDigit(string text) {
@@ -93,6 +93,7 @@ void printHoursAndAvg(int hourStart, int minuteStart, int interval, double avgU,
         cout << hourStart << ":";
         if (minuteStart + interval < 10) {
             cout << "0" << minuteStart + interval << ":" << endl;
+
         } else {
             cout << minuteStart + interval << ":" << endl;
         }
@@ -240,14 +241,6 @@ void showParametersHours(vector < string > timestamp, vector < double > u, vecto
 
 }
 
-void deleteMeasurements(unsigned int &countMeasurements, vector<string> &timestamp, vector<double> &u, vector<double> &i) {
-    for (int x=0; x<countMeasurements; x++) {
-        timestamp.pop_back();
-        u.pop_back();
-        i.pop_back();
-    }
-}
-
 
 
 //===================================================MAIN==========================================================
@@ -258,57 +251,13 @@ int main(int argc, char ** argv) {
 
     string wierszDanych;
     string fragment;
-    vector <string> timestamp;
-    vector <double> u;
-    vector <double> i;
+    vector < string > timestamp;
+    vector < double > u;
+    vector < double > i;
 
-    unsigned int errorLine=1;
-    unsigned int errorCount=0;
-    unsigned int index;
+    int errorLine=1;
+    int index;
 
-    string arg1;
-    string arg2;
-
-    unsigned int countMeasurements=0;
-
-    //-------------SPRAWDZENIE POPRAWNOSCI PODANYCH PARAMETROW--------------
-
-    if (argc != 3) {
-        cout << "Error: Invalid number of arguments.\n" << endl;
-        cout << "[program.exe -t PARAMETER] " << endl;
-        cout << "PARAMETER ::= h / m30 / m5" << endl;
-        return EXIT_SUCCESS;
-    } else {
-        arg1 = argv[1];
-        arg2 = argv[2];
-
-        //sprawdzam 1. parametr '-t'
-        if (arg1 != "-t") {
-            cout << "Error: Command '" << arg1 << "' not exists.\n" << endl;
-            cout << "[program.exe -t PARAMETER] " << endl;
-            cout << "PARAMETER ::= h / m30 / m5" << endl;
-            return EXIT_SUCCESS;
-        } 
-
-        //sprawdzam 2. parametr 'h' / 'mXX'
-        if (arg2 != "h") {
-            if (arg2[0] == 'm') {
-                //czy dlugosc arg2 = 2-3 znaki, z czego 2 ostatnie to liczba, ktora jest dzielnikiem 60
-                if ( !(arg2.length() > 1 && arg2.length() < 4 && isDigit(arg2.substr(1,2)) && isFactorOf60(stoi(arg2.substr(1,2)))) ) {  
-                    cout << "\nInvalid parameter 'm'.\n" << endl;
-                    cout << "Possible call: " << endl;
-                    cout << "program.exe -t m[factor of 60]" << endl;
-                    cout << "Example: program.exe -t m30" << endl;
-                    return EXIT_SUCCESS;
-                }
-            } else {
-                cout << "Error: Parameter '" << arg2 << "' not exists.\n" << endl;
-                cout << "[program.exe -t PARAMETER] " << endl;
-                cout << "PARAMETER ::= h / m30 / m5" << endl;
-                return EXIT_SUCCESS;
-            }
-        }
-    }
     //-------------------WYCIAGNIECIE DANYCH Z PLIKU-----------------------
 
     if (plik.good() == true) {
@@ -316,7 +265,6 @@ int main(int argc, char ** argv) {
             getline(plik, wierszDanych);
             index = 0;
 
-            //0. pusta ostatnia linijka
             if (wierszDanych == "") {
                 break;
             }
@@ -327,8 +275,7 @@ int main(int argc, char ** argv) {
             if (fragment != "{\"timestamp_server\": \"") {
                 cout << "Error: Invalid data in file. ";
                 cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 23 << endl;
-                errorCount++;
-                continue;
+                return EXIT_SUCCESS;
             }
 
             //1.1 sprawdzam timestamp dla "timestamp_server"
@@ -338,8 +285,7 @@ int main(int argc, char ** argv) {
             if (!isTimestamp(fragment)) {
                 cout << "Error: Invalid data in file. ";
                 cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
-                errorCount++;
-                continue;
+                return EXIT_SUCCESS;
             }
 
             //2. sprawdzam "data"  |  ", "data": {"
@@ -349,13 +295,11 @@ int main(int argc, char ** argv) {
             if (fragment != "\", \"data\": {\"") {
                 cout << "Error: Invalid data in file. ";
                 cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 14 << endl;
-                errorCount++;
-                continue;
+                return EXIT_SUCCESS;
             }
 
 
             index += 10;
-            countMeasurements = 0;
             //poszczegolne pomiary
             while (1) {
 
@@ -366,9 +310,7 @@ int main(int argc, char ** argv) {
                 if (!isTimestamp(fragment)) {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 15 << endl;
-                    errorCount++;
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
-                    break;
+                    return EXIT_SUCCESS;
                 }
                 timestamp.push_back(fragment);
 
@@ -379,10 +321,7 @@ int main(int argc, char ** argv) {
                 if (fragment != "\":{\"U\":") {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 8 << endl;
-                    errorCount++;
-                    timestamp.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
-                    break;
+                    return EXIT_SUCCESS;
                 }
 
                 //2.3 sprawdzam wartosc "U" dla "data"
@@ -392,10 +331,7 @@ int main(int argc, char ** argv) {
                 if (!isDoubleAB_CD(fragment)) {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
-                    errorCount++;
-                    timestamp.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
-                    break;
+                    return EXIT_SUCCESS;
                 }
                 u.push_back(stod(fragment));
 
@@ -406,11 +342,7 @@ int main(int argc, char ** argv) {
                 if (fragment != ",\"I\":") {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
-                    errorCount++;
-                    timestamp.pop_back();
-                    u.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
-                    break;
+                    return EXIT_SUCCESS;
                 }
 
                 //2.5 sprawdzam wartosc "I" dla "data"
@@ -420,14 +352,9 @@ int main(int argc, char ** argv) {
                 if (!isDoubleAB_CD(fragment)) {
                     cout << "Error: Invalid data in file. ";
                     cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
-                    errorCount++;
-                    timestamp.pop_back();
-                    u.pop_back();
-                    deleteMeasurements(countMeasurements, timestamp, u, i);
-                    break;
+                    return EXIT_SUCCESS;
                 }
                 i.push_back(stod(fragment));
-                countMeasurements++;
 
                 //3. sprawdzam czy koniec pomiaru lub koniec wiersza
                 index += 5;
@@ -436,16 +363,13 @@ int main(int argc, char ** argv) {
                 //3.a) czy koniec pomiaru
                 if (fragment != "},\"") {
                     //3.b) czy koniec wiersza
-                    fragment = wierszDanych.substr( index, wierszDanych.length()-index );
                     if (fragment == "}}}"){
                     //koniec wiersza
                     break;
                     } else {
                         cout << "Error: Invalid data in file. ";
                         cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 4 << endl;
-                        errorCount++;
-                        deleteMeasurements(countMeasurements, timestamp, u, i);
-                        break;
+                        return EXIT_SUCCESS;
                     }
                 }
                 //kolejny pomiar
@@ -455,7 +379,7 @@ int main(int argc, char ** argv) {
         }
 
     } else {
-        cout << "Error: File not exists." << endl;
+        cout << "Plik nie istnieje." << endl;
     }
 
     plik.close();
@@ -465,32 +389,37 @@ int main(int argc, char ** argv) {
     //showParametersIndex(timestamp, u, i, 0, 3);
     //showParametersHours(timestamp, u, i, "10:30", "10:45");
 
-    if (errorCount != 0) {
-        char choice;
-        cout << endl;
-        cout << "Uwaga: Liczba bledow w pliku: " << errorCount << ". Czy chcesz kontynuowac? Y/N" << endl;
-        cin >> choice;
-        switch (choice) {
-            case 'Y':
-                //zostanie wykonana dalsza czesc programu
-                break;
-            case 'y':
-                //zostanie wykonana dalsza czesc programu
-                break;
-            default:
-                return EXIT_SUCCESS;
+    if (argc != 3) {
+        cout << "Error: Invalid number of arguments.\n" << endl;
+        cout << "[program.exe -t PARAMETER] " << endl;
+        cout << "PARAMETER ::= h / m30 / m5" << endl;
+    } else {
+        string arg1 = argv[1];
+        string arg2 = argv[2];
+
+        if (arg1 == "-t") {
+            if (arg2 == "h") {
+                avg(timestamp, u, i, 60);
+            } else if (arg2[0] == 'm') {
+                if (arg2.length() > 1 && arg2.length() < 4 && isDigit(arg2.substr(1,2))) {
+                    int interval = stoi(arg2.substr(1,2));
+
+                    if (isFactorOf60(interval)) {
+                        avg(timestamp, u, i, interval);
+                    }
+                } else {
+                    cout << "\nInvalid parameter 'm'.\n" << endl;
+                    cout << "Possible call: " << endl;
+                    cout << "program.exe -t m[factor of 60]" << endl;
+                    cout << "Example: program.exe -t m30" << endl;
+                }
+            } else {
+                cout << "Parameter not exists." << endl;
+            }
+        } else {
+            cout << "Command not exists." << endl;
         }
     }
-
-
-    if (arg2 == "h") {
-        avg(timestamp, u, i, 60);
-    } 
-    if (arg2[0] == 'm') {
-        int interval = stoi(arg2.substr(1,2));
-        avg(timestamp, u, i, interval);
-    }
-        
 	return EXIT_SUCCESS;
 }
 
@@ -507,5 +436,48 @@ int main(int argc, char ** argv) {
 //-dane w pliku musza byc uporzadkowane od najwczesniejszego do najpozniejszego pomiaru
 //-data musi byc poprawnie zapisana (brak pelnej walidacji daty)
 
-//Dzialanie:
-//-po wykryciu blednego formatu w pliku ignoruje caly wiersz, w ktorym wystapil blad
+
+//Do poprawy:
+//-jezyk wyswietlany podczas pracy programu (errory po angielsku, program po polsku) 
+//  (czy zmienic na calosc po polsku ?)
+//  ( [error "Brak takiego polecenia.", error "Plik nie istnieje"] sa po polsku, a inne errory sa po angielsku)
+
+
+//Error: Niepoprawna skladnia danych w pliku. Linia: 3, Kolumna: 10-15
+
+
+/*
+cout << "Error: Invalid data in file. ";
+cout << "Line: " << errorLine << ", Column: " << index + 1 << "-" << index + 6 << endl;
+
+cout << "Error: Niepoprawna skladnia danych w pliku. ";
+cout << "Linia: " << errorLine << ", Kolumna: " << index + 1 << "-" << index + 6 << endl;
+*/
+
+/*
+cout << "Error: Invalid number of arguments.\n" << endl;
+cout << "[program.exe -t PARAMETER] " << endl;
+cout << "PARAMETER ::= h / m30 / m5" << endl;
+
+cout << "Error: Niepoprawna liczba argumentow.\n" << endl;
+cout << "[program.exe -t PARAMETER] " << endl;
+cout << "PARAMETER ::= h / m30 / m5" << endl;
+*/
+
+/*
+cout << "\nBledna nazwa parametru 'm'.\n" << endl;
+cout << "Mozliwe wywolanie: " << endl;
+cout << "program.exe -t m[dzielnik liczby 60]" << endl;
+cout << "Np.: program.exe -t m30" << endl;
+
+cout << "\nInvalid parameter 'm'.\n" << endl;
+cout << "Possible call: " << endl;
+cout << "program.exe -t m[factor of 60]" << endl;
+cout << "Example: program.exe -t m30" << endl;
+*/
+
+/*
+cout << "Brak takiego polecenia." << endl;
+
+cout << "No such command." << endl;
+*/
