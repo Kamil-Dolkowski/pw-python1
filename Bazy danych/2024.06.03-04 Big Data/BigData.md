@@ -108,28 +108,92 @@ Data source 2
 # Load: 
 -przetworzone dnae są ładowane do docelowego systemu, np. do hurtowni dnaych, bazy danych, system analityczny
 
+
+- - - - - - - - - 
+04.06.2024
+
+
+ETL w pracy !
+
+# Znaczenie w procesie przetwarzania danych:
+-integracja danych
+-jakość danych
+-zarządzanie dużymi wolumenami danych
+-automatyzacja procesów
+-wsparcie dla analiz biznesowych
+
+#- - - - - - - - - - - - - - - - - - - - 
+
+# Hurtownie danych
+-firmy gromadzą dane z różnych systemów operacyjnych
+
+# Migracja danych
+
+# Integracja danych z chmurami
+-kompleksowa analiza danych i raportowanie
+-różne aplikacje SaaS 
+
+# Analiza danych klientów
+-różne kanały: strony internetowe, e-maile, ...
+-wydobywa dane, transformuje i ...
+
+#- - - - - - - - - - - - - - - - - - - - 
+
+# Narzędzia ETL:
+-SQL Server Integration Services (SSIS)
+-
+
+
+# Zalety: (ETL)
+-integracja z SQL Server
+-bogaty interfejs użytkownika
+-duża funkcjonalność
+-rozszerzalność
+
+# Wady:
+-ograniczona skalowalnośc
+-koszt
+-platforma Windows
+
+
+Apache Nifi
+
 #---------------------------------------------------------------------------------
 
+# Data Science
+interdyscyplinarna dziedzina, która łączy wiedzę z zakresu statystyki, informatyki oraz dziedzin biznesowych
+procesy gromadzenia, przetwarzania, analizy oraz interpretacji dużych i złożonych zbiorów danych
+wspieranie decyzji biznesowych, przewidywanie trendów, ...
 
+# Kluczowe elementy:
+-eksploracja danych
+-modelowanie predykcyjne
+-wizualizacja danych
+-automatyzacja procesów
+
+# Umiejętności:
+-znajomość statystyki i matematyki - metody statystyczne, algebra liniowa, rachunek całkowy i różniczkowy
+-programowanie - Python, SQL, R, Jupyter Notebook
+-uczenie maszynowe
+-analiza danych
+-wizualizacja danych
+-komunikacja
+
+# Narzędzia:
+-języki programowania: Python, SQL, R
+-biblioteki analityczne i machine learning
+-narzędzia do eksploracji danych
+-platformy Big Data
+-??
+
+
+# Przykłady:
+-Analiza sentymentu w mediach społ.
+-Predykcja churnu klientów
+    churn - powody rezygnacji z danej usługi lub produktu
+-Rekomendacje produktów
+-Analiza koszyka zakupowego
+-Monitorowanie jakości powietrza
 
 #---------------------------------------------------------------------------------
 
-
-
-#---------------------------------------------------------------------------------
-
-
-
-#---------------------------------------------------------------------------------
-
-
-
-#---------------------------------------------------------------------------------
-
-
-
-#---------------------------------------------------------------------------------
-
-
-
-#---------------------------------------------------------------------------------
