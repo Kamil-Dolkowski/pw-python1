@@ -1,6 +1,6 @@
 INFO:
 
-program.cpp -> program3.cpp
+program.cpp -> program5.cpp + poprawki (ostateczny program)
 program1.cpp -> program 1.0 (wczesna wersja programu, niepełna funkcjonalność)
 program2.cpp -> program 2.0 (jeśli jest błąd w wierszu, to program się kończy)
 program3.cpp -> program 3.0 (jeśli jest błąd w wierszu, to cały wiersz jest pomijany)
