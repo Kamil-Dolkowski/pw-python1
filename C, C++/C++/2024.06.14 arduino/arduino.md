@@ -453,3 +453,55 @@ void loop() {
     delay(20);
   }
 }
+
+#--------------------------KLASA----------------------------
+
+#define PIN_BUTTON 4
+
+
+class Button {
+private:
+  int pin;
+  int previousState;
+  int currentState;
+public:
+  Button(int pin) {
+    this->pin = pin;
+  }
+
+  void doAction() {
+    if (digitalRead(pin) == HIGH) {
+      currentState = 1;
+    } else {
+      currentState = 0;
+    }
+
+    delay(10);
+    if (digitalRead(pin) == HIGH) {
+      delay(20);
+      action();
+      while (digitalRead(pin) == HIGH); 
+      delay(20);
+    } 
+  }
+
+  void action() {
+  Serial.print("Button pressed ");
+  
+  Serial.println(millis());
+}
+
+};
+
+Button b1(4);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(PIN_BUTTON, INPUT);
+}
+
+void loop() {
+  b1.doAction();
+  
+  delay(100);
+}
