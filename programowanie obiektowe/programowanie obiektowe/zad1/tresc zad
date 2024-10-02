@@ -1,0 +1,53 @@
+// Zad.1 
+// Implementacja klasy Point oraz Line w języku C
+
+//----------------------- point.c
+
+struct point {
+    int x;
+    int y;
+};
+
+//----------------------- line.c
+
+struct line {
+    point start;
+    point end;
+};
+
+//----------------------- point.h
+
+struct point * point-new(int x, int y);
+void point_free(struct point *p);
+int point_get_x(struct point *p);
+int point_get_y(struct point *p);
+
+//----------------------- line.h
+
+struct line* line_new(struct point *p1, struct point *p2);
+void line_free(struct line *l);
+struct point* line_get_start(struct line *l);
+struct point* line_get_end(struct line *l);
+double line_get_length(...);
+
+
+//----------------------- main.c
+
+#include "line.h"
+#include "point.h"
+
+int main()
+{
+    struct point *p1 = point_new(10,20);
+    struct point *p2 = point_new(30,40);
+
+    struct line *l1 = line_new(p1, p2);
+    
+    printf("Długośc linii: %f\n", line_get_length(l1));
+
+    line_free(l1);
+    point_free(p2);
+    point_free(p1);
+
+    return 0;
+}

@@ -1,7 +1,9 @@
 {
     "files.associations": {
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "tresc zad": "c",
+        "point.h": "c"
     }
 } // {
 //     "files.associations": {
