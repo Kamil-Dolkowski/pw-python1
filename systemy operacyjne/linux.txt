@@ -1,0 +1,81 @@
+
+==========MAN=========
+man  - manual, pomoc do programów (poleceń, ale nie tylko)
+
+$ man passwd
+$ man man
+$ man 3 fopen   - pomoc dotyczaca wywolan bibliotek systemowych (do programowania)
+
+==========ID==========
+id  - informacja o tym, jakim użytkownikiem jesteśmy (do jakich grup przynależymy)
+
+==========W===========
+w  - informacja o innych zalogowanych użytkownikach
+
+======================
+
+polecenia w terminalu zwykle mają postać:
+polecenie [przełączniki] [argumenty]
+
+======================
+cd, pwd, ls
+
+ls          - listuje pliki i foldery
+ls -l       - listuje pliki i foldery szczegółowo
+ls -a       - listuje pliki i foldery, również ukryte
+ls -lt      - listuje pliki i foldery szczegółowo, ale posortowane wg daty modyfikacji
+
+ls -l -t jest równoznaczne z poleceniem ls -lt
+
+oprócz przełączników dodajemy argument:
+ls -lt /usr/bin
+
+ls          - polecenie
+-lt         - przełączniki
+/usr/bin    - argument
+
+-- -- -- -- -- -- -- --
+
+touch   - aktualizuje datę modyfikacji pliku (lub go tworzy, gdy nie istnieje)
+
+C:\Folder\plik
+
+======================
+
+pliki/katalogi ukryte zaczynają się od kropki: np.    .test
+
+Specjalne "katalogi":
+.  - wskazuje na bieżący katalog 
+.. - wskazuje na katalog piętro niżej
+
+/home/fulmanp/      <- .
+/home/              <- ..
+
+======================
+
+/bin
+/boot (start systemu)(nie dotykać)
+/dev (urządzenia)
+/etc (pliki konfiguracyjne)
+/home (katalogi domowe)
+/lib (biblioteki)
+/media 
+/mnt
+/opt (program files)
+/proc (informacje o komputerze, np. procesy, statystyki)
+/root
+/run (pliki tymczasowe)
+/sbin
+/usr
+/srv
+/sys
+/tmp (pliki tymczasowe)
+/var (dane operacyjne programów, np. bazy danych)
+
+======================
+
+dmesg - odczyt logów systemowych jądra
+
+cat - wyświetlenie zawartości pliku
+
+/dev/sda - podłączony pendrive 
