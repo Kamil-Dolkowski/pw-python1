@@ -30,7 +30,7 @@
 
 16. find /usr/bin -size +5M
 
-?17. find /usr/bin -type f -size +300c -size -500c -exec cp {} ~/lab3 \;
+17. find /usr/bin -type f -size +300c -size -500c -exec cp {} ~/lab3 \;
 
 18. ln tekst2.txt TEKST2.TXT
 
@@ -40,5 +40,6 @@
 
 21. ls /dev | grep tty
 
-22. 
+22. man ls
+ls -R
 
