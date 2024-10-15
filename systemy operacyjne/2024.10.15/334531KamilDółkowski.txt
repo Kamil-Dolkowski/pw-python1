@@ -10,7 +10,7 @@
 
 6. mkdir -p lab3/dir1/dir2/dir3
 
-7. cd lab3/dir1/dir2/; cat ~/lab3/domowy.txt
+7. cd lab3/dir1/dir2/; cat ../../domowy.txt
 
 8. cd ~/lab3; touch tekst1.txt tekst2.txt tekst3.txt
 
@@ -42,4 +42,3 @@
 
 22. man ls
 ls -R
-
