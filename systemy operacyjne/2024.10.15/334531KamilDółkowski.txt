@@ -1,0 +1,44 @@
+1. cd ~; mkdir lab3
+
+2. chmod g+rx lab3
+
+3. chmod o-rwx lab3
+
+4. ls -ld lab3
+
+5. ls -la > lab3/domowy.txt
+
+6. mkdir -p lab3/dir1/dir2/dir3
+
+7. cd lab3/dir1/dir2/; cat ~/lab3/domowy.txt
+
+8. cd ~/lab3; touch tekst1.txt tekst2.txt tekst3.txt
+
+9. cp tekst1.txt tekst2.txt tekst3.txt dir1/dir2/dir3
+
+10. touch .ukryty
+
+11. cd dir1/dir2/dir3; mv tekst1.txt nowy_tekst1.txt
+
+12. cd ~/lab3; cat /proc/meminfo > tekst1.txt
+
+13. cat /proc/cpuinfo >> tekst1.txt
+
+14. who > tekst2.txt
+
+15. find / -type d -name share
+
+16. find /usr/bin -size +5M
+
+?17. find /usr/bin -type f -size +300c -size -500c -exec cp {} ~/lab3 \;
+
+18. ln tekst2.txt TEKST2.TXT
+
+19. ln -s tekst2.txt Tekst2.txt
+
+20. ls -la
+
+21. ls /dev | grep tty
+
+22. 
+
