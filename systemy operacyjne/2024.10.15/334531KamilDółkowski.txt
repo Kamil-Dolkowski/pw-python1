@@ -36,7 +36,7 @@
 
 19. ln -s tekst2.txt Tekst2.txt
 
-20. ls -la
+20. ls -a
 
 21. ls /dev | grep tty
 
