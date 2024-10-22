@@ -1,0 +1,6 @@
+ssh user@host
+
+ssh konrad@192.168.48.18
+ssh 192.168.48.18 -l konrad
+
+(oba są równoważne)

@@ -1,0 +1,5 @@
+Wpisać w eksploratorze plików:
+
+sftp://192.168.48.25
+
+(by ściągnąć pliki z Rasberrypi)
