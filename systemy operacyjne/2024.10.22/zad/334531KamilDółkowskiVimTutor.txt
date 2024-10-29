@@ -203,7 +203,7 @@ Teraz możemy kontynuować i przejść do Lekcji 2.
 	 Jeśli zobaczysz inny znak, oznacza to, że wpisałeś coś źle; wciśnij
 	 <ESC> i zacznij od początku.
 
----> Jest tu parę papier wyrazów, które kamień nie należą do nożyce tego zdania.
+---> Jest tu parę wyrazów, które nie należą do tego zdania.
 
   5. Powtarzaj kroki 3. i 4. dopóki zdanie nie będzie poprawne, potem
   przejdź do Lekcji 2.2.
@@ -222,7 +222,7 @@ Teraz możemy kontynuować i przejść do Lekcji 2.
 
   4. Wpisz  d$  aby usunąć resztę linii.
 
----> Ktoś wpisał koniec tego zdania dwukrotnie. zdania dwukrotnie.
+---> Ktoś wpisał koniec tego zdania dwukrotnie.
 
 
   5. Przejdź do Lekcji 2.3., by zrozumieć co się stało.
@@ -294,7 +294,7 @@ UWAGA: Wpisanie tylko ruchu w trybie Normal bez operatora przeniesie kursor
   3. Powtarzaj kroki 1. i 2. z innymi mnożnikami, aby usunąć kolejne wyrazy
      KAPITALIKAMI jednym poleceniem
 
----> ta ASD WE linia QWE ASDF ZXCV FG wyrazów została ERT FGH CF oczyszczona.
+---> ta linia wyrazów została oczyszczona.
 
 UWAGA:  Mnożnik pomiędzy operatorem  d  i ruchem działa podobnie do ruchu bez
         operatora.
@@ -315,10 +315,7 @@ UWAGA:  Mnożnik pomiędzy operatorem  d  i ruchem działa podobnie do ruchu bez
   4. Wpisz  2dd  aby usunąć dwa wiersze.
 
 --->  1)  Róże są czerwone,
---->  2)  Błoto jest fajne,
 --->  3)  Fiołki są niebieskie,
---->  4)  Mam samochód,
---->  5)  Zegar podaje czas,
 --->  6)  Cukier jest słodki,
 --->  7)  I ty też.
 
@@ -386,10 +383,10 @@ UWAGA:  Mnożnik pomiędzy operatorem  d  i ruchem działa podobnie do ruchu bez
 
   5. Powtarzaj kroki 2. do 4. aż znajdą się w odpowiednim porządku.
 
----> d) Jak dwa aniołki.
+---> a) Na górze róże,
 ---> b) Na dole fiołki,
 ---> c) A my się kochamy,
----> a) Na górze róże,
+---> d) Jak dwa aniołki.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -406,7 +403,7 @@ UWAGA:  Mnożnik pomiędzy operatorem  d  i ruchem działa podobnie do ruchu bez
 
   4. Powtarzaj kroki 2. i 3. dopóki pierwsza linia nie będzie taka, jak druga.
 
---->  Kjedy ten wiersz bił wstókiwany, ktoś wciznął perę złych klawirzy!
+--->  Kiedy ten wiersz był wstukiwany, ktoś wcisnął parę złych klawiszy!
 --->  Kiedy ten wiersz był wstukiwany, ktoś wcisnął parę złych klawiszy!
 
   5. Teraz czas na Lekcję 3.3.
@@ -431,7 +428,7 @@ UWAGA: Pamiętaj, by uczyć się ćwicząc, a nie pamięciowo.
   5. Powtarzaj kroki 3. i 4. dopóki pierwsze zdanie nie będzie takie same,
      jak drugie.
 
----> Ta lunos ma pire słów, które tżina zbnic użifajonc pcmazu zmień.
+---> Ta linia ma parę słów, które trzeba zmienić używając polecenia zmień.
 ---> Ta linia ma parę słów, które trzeba zmienić używając polecenia zmień.
 
   Zauważ, że  ce  nie tylko zamienia wyraz, ale także zmienia tryb na
@@ -456,7 +453,7 @@ UWAGA: Pamiętaj, by uczyć się ćwicząc, a nie pamięciowo.
 
   5. Wpisz  c$ , popraw koniec wiersza i wciśnij <ESC>.
 
----> Koniec tego wiersza musi być poprawiony, aby wyglądał tak, jak drugi.
+---> Koniec tego wiersza musi być poprawiony używając polecenia  c$ .
 ---> Koniec tego wiersza musi być poprawiony używając polecenia  c$ .
 
 UWAGA:  Możesz używać <BS> aby poprawiać błędy w czasie pisania.
@@ -567,7 +564,7 @@ Uwaga: Ta funkcja jest bardzo użyteczna w debuggowaniu programu
   3. Teraz wpisz  :s/czaas/czas/g  . Dodane  g  oznacza zamianę (substytucję)
      globalnie w całej linii.  Zmienia wszystkie wystąpienia 'czaas' w linii.
 
----> Najlepszy czaas na zobaczenie najładniejszych kwiatów to czaas wiosny.
+---> Najlepszy czas na zobaczenie najładniejszych kwiatów to czas wiosny.
 
   4. Aby zmienić wszystkie wystąpienia łańcucha znaków pomiędzy dwoma liniami,
      wpisz: :#,#s/stare/nowe/g gdzie #,# są numerami linii ograniczających
@@ -674,6 +671,19 @@ UWAGA: Wciśnięcie  v  zaczyna tryb Wizualny. Możesz poruszać kursorem, by
 
 	    ** By wstawić zawartość pliku, wpisz   :r NAZWA_PLIKU **
 
+  1. Przenieś kursor do tego wiersza.
+
+  2. Wciśnij  v  i przenieś kursor do punktu 5. Zauważ, że tekst został
+     podświetlony.
+
+  3. Wciśnij znak  : . Na dole ekranu pojawi się  :'<,'> .
+
+  4. Wpisz  w TEST , gdzie TEST to nazwa pliku, który jeszcze nie istnieje.
+     Upewnij się, że widzisz  :'<,'>w TEST zanim wciśniesz Enter.
+
+  5. Vim zapisze wybrane linie do pliku TEST. Użyj  :!dir  lub  :!ls , żeby to
+     zobaczyć. Jeszcze go nie usuwaj! Użyjemy go w następnej lekcji.
+
   1. Umieść kursor tuż powyżej tej linii.
 
 UWAGA: Po wykonaniu kroku 2. zobaczysz tekst z Lekcji 5.3. Potem przejdź
@@ -729,10 +739,12 @@ UWAGA: Możesz też wczytać wyjście zewnętrznego polecenia. Na przykład
   3. Wpisz trochę tekstu i wciśnij <ESC> by wyjść z trybu Insert (wprowadzanie).
 
 ---> Po wciśnięciu  o  kursor znajdzie się w otwartej linii w trybie Insert.
+Trochę tekstu.
 
   4. By otworzyć linię POWYŻEJ kursora, wciśnij wielkie  O  zamiast małego
      o . Wypróbuj to na linii poniżej.
 
+Trochę tekstu.
 ---> Otwórz linię powyżej wciskając SHIFT-O gdy kursor będzie na tej linii.
 
 
@@ -755,7 +767,7 @@ UWAGA: Możesz też wczytać wyjście zewnętrznego polecenia. Na przykład
   5. Użyj  e  by przejść do kolejnego niedokończonego wyrazu i powtarzaj kroki
      3. i 4.
 
----> Ta li poz Ci ćwi dodaw teks do koń lin
+---> Ta linia pozwoli Ci ćwiczyć dodawanie tekstu do końca linii.
 ---> Ta linia pozwoli Ci ćwiczyć dodawanie tekstu do końca linii.
 
 Uwaga:  a ,  i  oraz  A  prowadzą do trybu Insert, jedyną różnicą jest miejsce,
@@ -777,7 +789,7 @@ Uwaga:  a ,  i  oraz  A  prowadzą do trybu Insert, jedyną różnicą jest miej
 
   5. Powtarzaj kroki by wymienić wszystkie xxx.
 
----> Dodanie 123 do xxx daje xxx.
+---> Dodanie 123 do 456 daje 579.
 ---> Dodanie 123 do 456 daje 579.
 
 UWAGA: Tryb Replace jest jak tryb Insert, ale każdy znak usuwa istniejący
@@ -803,7 +815,8 @@ UWAGA: Tryb Replace jest jak tryb Insert, ale każdy znak usuwa istniejący
      końca następnej linii  j$  i upakuj tam tekst z  p .
 
 --->  a) to jest pierwszy element.
-      b)
+      b) to jest drugi element.
+
 Uwaga: możesz użyć  y  jako operatora;  yw  kopiuje jeden wyraz.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
