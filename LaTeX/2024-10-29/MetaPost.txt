@@ -1,0 +1,18 @@
+http://www.tlhiv.org/mppreview/
+
+
+pair A,B,C,D,E;
+
+A=(0,0);
+B=(70,0);
+C=(20,40);
+
+D=0.5[A,B];
+
+draw A--B--C--cycle;
+
+draw C--D withcolor red;
+
+draw A withpen pencircle scaled 2bp;
+draw B withpen pencircle scaled 2bp;
+draw C withpen pencircle scaled 2bp;
