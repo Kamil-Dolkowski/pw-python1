@@ -5,18 +5,15 @@ echo "tekst" >> plik.txt
 2. Alt+3        (M-3)
 
 3. 
-Alt+Shift+}     (M-})
-Alt+Shift+{     {M-{)
+Alt+}           (M-})
+Alt+{           (M-{)
 
-4. Alt-O    (M-O)  [tymaczasowo]
+4. W pliku /etc/nanorc (plik konfiguracyjny) :
 
-
-/etc/nanorc (plik konfiguracyjny)
-
-set tabsize 4
 set tabstospaces
 
-5. ~/.vimrc (plik konfiguracyjny)
-set autoindent expandtab tabstop=2 shiftwidth=2
+5. W pliku ~/.vimrc (plik konfiguracyjny) (trzeba go utworzyć) :
 
-6. 
+set expandtab
+
+6. Plik "334531KamilDółkowskiVimTutor.txt"
