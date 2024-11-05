@@ -1,0 +1,204 @@
+This is MetaPost, version 2.02 (TeX Live 2023/Debian) (kpathsea version 6.3.5)  5 NOV 2024 15:12
+**rysunki.mp
+(/usr/share/texlive/texmf-dist/metapost/base/mpost.mp
+(/usr/share/texlive/texmf-dist/metapost/base/plain.mp
+Preloading the plain mem file, version 1.005) ) (./rysunki.mp
+! mpx file ended unexpectedly.
+l.32 
+     
+The file had too few picture expressions for btex...etex
+blocks.  Such files are normally generated automatically
+but this one got messed up.  You might want to insert a
+picture expression now.
+
+! An expression can't begin with `,'.
+<inserted text> 
+                0
+<to be read again> 
+                   ,
+l.40 label.bot(btex $E$ etex,
+                              E);
+I'm afraid I need some sort of value in order to continue,
+so I've tentatively inserted `0'. You may want to
+delete this zero and insert something else;
+see Chapter 27 of The METAFONTbook for an example.
+
+>> 0
+>> "cmr10"
+! Not implemented: (known numeric)infont(string).
+<to be read again> 
+                   scaled
+thelabel->...se:p=(EXPR3)infont.defaultfont.scaled
+                                                  .defaultscale.fi;p.shifted...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> "cmr10"
+>> 1
+! Not implemented: (string)scaled(known numeric).
+<to be read again> 
+                   ;
+thelabel->...t.defaultfont.scaled.defaultscale.fi;
+                                                  p.shifted((EXPR4)+labeloff...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture p
+>> 1
+! Equation cannot be performed (unknown picture=numeric).
+<to be read again> 
+                   ;
+thelabel->...t.defaultfont.scaled.defaultscale.fi;
+                                                  p.shifted((EXPR4)+labeloff...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm sorry, but I don't know how to make such things equal.
+(See the two expressions just above the error message.)
+
+>> unknown picture p
+! Not implemented: lrcorner(unknown picture).
+<to be read again> 
+                   +
+thelabel->...(SUFFIX2)-(labxf(SUFFIX2)*lrcorner.p+
+                                                  labyf(SUFFIX2)*ulcorner.p+...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+particular type. Continue, and I'll simply return the
+argument (shown above) as the result of the operation.
+
+>> 0.5
+>> unknown picture p
+! Not implemented: (known numeric)*(unknown picture).
+<to be read again> 
+                   +
+thelabel->...(SUFFIX2)-(labxf(SUFFIX2)*lrcorner.p+
+                                                  labyf(SUFFIX2)*ulcorner.p+...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture p
+! Not implemented: ulcorner(unknown picture).
+<to be read again> 
+                   +
+thelabel->...lrcorner.p+labyf(SUFFIX2)*ulcorner.p+
+                                                  (1-labxf(SUFFIX2)-labyf(SU...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+particular type. Continue, and I'll simply return the
+argument (shown above) as the result of the operation.
+
+>> 1
+>> unknown picture p
+! Not implemented: (known numeric)*(unknown picture).
+<to be read again> 
+                   +
+thelabel->...lrcorner.p+labyf(SUFFIX2)*ulcorner.p+
+                                                  (1-labxf(SUFFIX2)-labyf(SU...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture p
+>> unknown picture p
+! Not implemented: (unknown picture)+(unknown picture).
+<to be read again> 
+                   +
+thelabel->...lrcorner.p+labyf(SUFFIX2)*ulcorner.p+
+                                                  (1-labxf(SUFFIX2)-labyf(SU...
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture p
+! Not implemented: llcorner(unknown picture).
+<to be read again> 
+                   )
+thelabel->...(SUFFIX2)-labyf(SUFFIX2))*llcorner.p)
+                                                  )endgroup
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+particular type. Continue, and I'll simply return the
+argument (shown above) as the result of the operation.
+
+>> -0.5
+>> unknown picture p
+! Not implemented: (known numeric)*(unknown picture).
+<to be read again> 
+                   )
+thelabel->...(SUFFIX2)-labyf(SUFFIX2))*llcorner.p)
+                                                  )endgroup
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture p
+>> unknown picture p
+! Not implemented: (unknown picture)+(unknown picture).
+<to be read again> 
+                   )
+thelabel->...(SUFFIX2)-labyf(SUFFIX2))*llcorner.p)
+                                                  )endgroup
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> (85.03935,-3)
+>> unknown picture p
+! Not implemented: (pair)-(unknown picture).
+<to be read again> 
+                   )
+thelabel->...SUFFIX2)-labyf(SUFFIX2))*llcorner.p))
+                                                  endgroup
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture p
+>> unknown picture p
+! Not implemented: (unknown picture)shifted(unknown picture).
+<to be read again> 
+                   endgroup
+l.40 label.bot(btex $E$ etex, E)
+                                ;
+I'm afraid I don't know how to apply that operation to that
+combination of types. Continue, and I'll return the second
+argument (see above) as the result of the operation.
+
+>> unknown picture %CAPSULE0x60d6891af6d0
+! Improper `addto'.
+<to be read again> 
+                   ;
+l.40 label.bot(btex $E$ etex, E);
+                                 
+This expression should have specified a known picture.
+So I'll not change anything just now.
+
+! I can't go on meeting you like this.
+l.41 label.urt(btex
+                    $D$ etex, D);
+One of your faux pas seems to have wounded me deeply...
+in fact, I'm barely conscious. Please fix it and try again.
+
+

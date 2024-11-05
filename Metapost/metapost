@@ -1,0 +1,8 @@
+plik źródłowy metapost:
+rysunki.metapost 
+  -> rysunki1.mps
+
+
+$ mpost rysunki; pdflatex mojagrafika.tex; clear
+
+$ mpost rysunki; pdflatex document.tex; clear
