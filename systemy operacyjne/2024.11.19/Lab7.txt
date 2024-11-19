@@ -1,0 +1,19 @@
+1. head -n 1 iris.csv
+
+2. tail -n +2 iris.csv
+
+3. cat iris.csv | sed 's/"Setosa"/1/g' | sed 's/"Versicolor"/2/g' | sed 's/"Virginica"/3/g'
+
+4. cat iris.csv | tail -n +2 | awk -F, '{ print $5 }' | sort | uniq | tr -d '"'
+
+5. cat iris.csv | tail -n +2 | awk -F, '{ suma = $1 + $2 + $3 + $4 } { print suma }'
+
+6. cat iris.csv | tail -n +2 | awk -F, '{ suma += $2 } { counter++ } END { print suma/counter }'
+
+7. cat iris.csv | tail -n +2 | awk -F, '$4 > max { line = $0 } $4 > max { max = $4 } END { print line }'
+
+8. cat iris.csv | tail -n +2 | awk -F, '$1 > 7 { print $5 }' | sort | uniq
+
+9. cat iris.csv | awk -F, '{ if(NR==1) printf "%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $5 ; else printf "%d\t%d\t%d\t%d\t%s\n", $1, $2, $3, $4, $5 }'
+
+10. ( head -n 1 iris.csv && tail -n +2 iris.csv | shuf ) > newIris.csv
