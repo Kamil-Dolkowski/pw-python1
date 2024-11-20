@@ -24,6 +24,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream &os, const TimeLength &t);
 
+    // const char * getString() const { return copy; }      // !! const char *   <- tak powinno być 
     char * getString() const { return copy; }
     
     static TimeLength& createZeroLength() {
