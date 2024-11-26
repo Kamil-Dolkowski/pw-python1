@@ -16,12 +16,11 @@ memory() {
 }
 
 load() {
-    echo "Load: " && uptime | awk '{print $8, $9, $10}'
+    echo -n "Load: " && uptime | awk '{print $8, $9, $10}'
 }
 
 uptime() {
-    echo "$(uptime | awk '{print $3 }' | cut -c 1)"
-    echo "$a"
+    echo -n "Uptime: " && uptime | awk '{print $3}' | tr -d ',' | awk -F: '{print $1 " hour,", $2 " minutes"}'
 }
 
 kernel() {
