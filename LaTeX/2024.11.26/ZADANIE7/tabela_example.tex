@@ -1,0 +1,30 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{enumerate}
+\usepackage{longtable}
+\usepackage{array}
+\begin{document}
+\begin{center}
+	{\large\textbf{Lista studentów}}
+\end{center}
+
+\renewcommand\arraystretch{1.5}
+\begin{center}
+	\setlength{\tabcolsep}{5pt}
+	\begin{longtable}{|m{0.7cm}|m{2cm}|m{5cm}|b{3cm}|m{2cm}|m{3cm}|}\hline
+		\textbf{L.p.} & \textbf{Katalog} & \textbf{Nazwisko i imię}& \textbf{Wydział} & {\raggedleft\textbf{Wiek}} &{\raggedleft\textbf{Płeć}} \\ \hline 
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{L.p.} & \textbf{Katalog} & \textbf{Nazwisko i imię}& \textbf{Wydział} & {\raggedleft\textbf{Wiek}} &{\raggedleft\textbf{Płeć}} \\ \hline 
+		\hline
+		\endhead
+		\endlastfoot
+		\centering 1. &  stud02&  Włodzimierz Waliszewski  & Elektroniki & 22 & mężczyzna \\ \hline
+		\centering 2. &  stud05&  Włodzimiera Waliszewska  & Zarządzania & 23 & kobieta \\ \hline
+	\end{longtable}
+\end{center}
+\end{document}
