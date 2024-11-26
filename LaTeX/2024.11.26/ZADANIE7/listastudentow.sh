@@ -42,14 +42,14 @@ do
     if [ $lp = "Lp." ] ; then
         continue
     fi
-    
-    echo "\centering $lp. &  $katalog&  $imie $nazwisko  & $wydzial & $wiek & $plec \\\\ \hline" >> $pliktex
+
+    echo "        \centering $lp. &  $katalog&  $imie $nazwisko  & $wydzial & $wiek & $plec \\\\ \hline" >> $pliktex
 
 done < $dane
 
 
 
-echo "\end{longtable}
+echo "    \end{longtable}
 \end{center}
 \end{document}" >> $pliktex
 
