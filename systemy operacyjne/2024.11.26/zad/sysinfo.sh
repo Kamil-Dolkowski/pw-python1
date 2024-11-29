@@ -129,8 +129,9 @@ if [ $1 ] ; then
                 print_internet
                 ;;
             (*)
-                echo "Error: Command '$1' does not exists."
+                echo "Error: Argument '$1' does not exists."
                 return_value=1
+                break
                 ;;
         esac
 
