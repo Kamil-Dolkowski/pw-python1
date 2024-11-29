@@ -3,7 +3,7 @@
 
 print_cpu() {
     echo -n "CPU: " 
-    cat /proc/cpuinfo | head -n 5 | tail -n 1 | cut -c 14-100
+    cat /proc/cpuinfo | head -n 5 | tail -n 1 | cut -c 14-
 }
 
 print_memory() {
@@ -17,41 +17,48 @@ print_memory() {
 
 print_load() {
     echo -n "Load: " 
-    uptime | awk '{print $8, $9, $10}'
+    uptime | awk -F, '{print $3 $4 $5}' | cut -c 17-
 }
 
 print_uptime() {
     echo -n "Uptime: "
-    uptime | awk '{print $3}' | tr -d ',' | awk -F: '{print $1 " hour,", $2 " minutes"}'
+    uptime -p | cut -c 4-
 }
 
 print_kernel() {
-echo "a"
+    echo -n "Kernel: "
+    uname -r
 }
 
 print_gpu() {
-echo "a"
+    echo -n "GPU: "
+    lspci | grep "VGA" | awk -F: '{print $3}' | cut -c 2-
 }
 
 print_user() {
-echo -n "User: "
-whoami
+    echo -n "User: "
+    whoami
 }
 
 print_shell() {
-echo "a"
+    echo -n "Shell: "
+    env | grep "SHELL=" | awk -F/ '{print $3}'
 }
 
 print_processes() {
-echo "a"
+    echo -n "Processes: "
+    ps -e | grep -E "[0-9]+" -c
 }
 
 print_threads() {
-echo "a"
+    echo -n "Threads: "
+    ps -me | grep " -" -c
 }
 
 print_ip() {
-echo "a"
+    echo -n "IP: "
+    echo -n "$(ip addr show | grep "inet " | awk '{print $2}' | head -n 1) "
+    echo $(ip addr show | grep "inet " | awk '{print $2}' | tail -n 1)
 }
 
 print_dns() {
@@ -60,12 +67,76 @@ print_dns() {
 }
 
 print_internet() {
-    ping 8.8.8.8 -W 1 -c 1
+    packet_loss=$(ping 8.8.8.8 -W 1 -c 1 | tail -n 2 | head -n 1 | awk -F, '{print $3}' | cut -d "%" -f 1)
+    
+    echo -n "Internet: "
+
+    if [ $packet_loss = 100 ] ; then
+        echo "NOT OK"
+    else
+        echo "OK"
+    fi
 }
 
 
+return_value=0
+
+
+
 if [ $1 ] ; then 
-    echo "ss"
+    while [ $1 ]; 
+    do 
+        command=$1
+
+        case ${command,,} in
+            ("cpu")
+                print_cpu
+                ;;
+            ("memory")
+                print_memory
+                ;;
+            ("load")
+                print_load
+                ;;
+            ("uptime")
+                print_uptime
+                ;;
+            ("kernel")
+                print_kernel
+                ;;
+            ("gpu")
+                print_gpu
+                ;;
+            ("user")
+                print_user
+                ;;
+            ("shell")
+                print_shell
+                ;;
+            ("processes")
+                print_processes
+                ;;
+            ("threads")
+                print_threads
+                ;;
+            ("ip")
+                print_ip
+                ;;
+            ("dns")
+                print_dns
+                ;;
+            ("internet")
+                print_internet
+                ;;
+            (*)
+                echo "Error: Command '$1' does not exists."
+                return_value=1
+                ;;
+        esac
+
+        shift
+
+    done
 else
     print_cpu
     print_memory
@@ -83,6 +154,4 @@ else
 fi
 
 
-
-
-# root -> zwraca 1
+echo -e "\nReturn value: $return_value"
