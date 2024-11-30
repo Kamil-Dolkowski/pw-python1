@@ -93,8 +93,14 @@ kill_process_by_name() {
 
     pgrep -f "$name" > /dev/null
     if [ $? -eq 0 ] ; then
-        pkill -f "$name"
-        echo "Process(es) with name '$name' was(were) killed."
+        if [ "$name" != "" ] ; then
+            echo "Process(es) with name '$name' was(were) killed."
+            echo "Killed process(es) PID:"
+            pgrep -f "$name"
+            pkill -f "$name"
+        else
+            echo "Error: Invalid name."
+        fi
     else
         echo "Process with name '$name' does not exists."
     fi
