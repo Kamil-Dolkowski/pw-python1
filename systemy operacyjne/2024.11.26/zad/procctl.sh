@@ -95,7 +95,7 @@ kill_process_by_name() {
     if [ $? -eq 0 ] ; then
         if [ "$name" != "" ] ; then
             echo "Process(es) with name '$name' was(were) killed."
-            echo "Killed process(es) PID:"
+            echo "Killed process(es) PID(s):"
             pgrep -f "$name"
             pkill -f "$name"
         else
