@@ -67,14 +67,13 @@ print_dns() {
 }
 
 print_internet() {
-    packet_loss=$(ping 8.8.8.8 -W 1 -c 1 | tail -n 2 | head -n 1 | awk -F, '{print $3}' | cut -d "%" -f 1)
-    
     echo -n "Internet: "
 
-    if [ $packet_loss = 100 ] ; then
-        echo "NOT OK"
-    else
+    ping 8.8.8.8 -W 1 -c 1 &> /dev/null 
+    if [ $? -eq 0 ] ; then
         echo "OK"
+    else
+        echo "NOT OK"
     fi
 }
 
