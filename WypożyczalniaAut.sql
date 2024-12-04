@@ -12,6 +12,7 @@ CREATE TABLE customers (
 
 CREATE TABLE cars (
     car_id SERIAL PRIMARY KEY,
+    registration_number VARCHAR(9) NOT NULL,
     manufacturer VARCHAR(20) NOT NULL,
     model VARCHAR(20) NOT NULL,
     color VARCHAR(20) NOT NULL,
