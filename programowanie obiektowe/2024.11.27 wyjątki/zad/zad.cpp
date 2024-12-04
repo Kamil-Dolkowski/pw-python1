@@ -27,8 +27,8 @@ public:
     ~Queue() {}
     virtual void push(const T &value) {
         Node<T> *n = new Node<T>(value);
-        n->next = tail;
-        tail = n;
+        n->next = head;
+        head = n;
         std::cout << "push " << value << std::endl;
     };
     virtual T pop() {
@@ -37,8 +37,18 @@ public:
         }
         Node<T> *n = head;
         T ret = n->data;
-        head = n->next;
+
+        Node<T> *t = tail;
+        while (t->next != head) {
+            t = t->next;
+            std::cout << t->data << std::endl;
+        }
+
+        t->next = nullptr;
+
+        head = t;
         delete n;
+
         std::cout << "pop " << ret << std::endl;
         return ret; 
     };
@@ -58,8 +68,8 @@ public:
         return stack_size;
     };
 private:
-    Node<T> *head;
-    Node<T> *tail;
+    Node<T> *head = nullptr;
+    Node<T> *tail = nullptr;
 };
 
 
@@ -125,11 +135,12 @@ int main() {
 
     try {
         kolejka.push(1);
-        std::cout << "size " << kolejka.size() << std::endl;
+        kolejka.push(2);
+        // std::cout << "size " << kolejka.size() << std::endl;
         kolejka.pop();
-        std::cout << "size " << kolejka.size() << std::endl;
-        kolejka.pop();
-        kolejka.pop();
+        // std::cout << "size " << kolejka.size() << std::endl;
+        // kolejka.pop();
+        // kolejka.pop();
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }

@@ -53,7 +53,8 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "cinttypes": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "set": "cpp"
     }
 } // {
 //     "files.associations": {
