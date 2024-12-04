@@ -35,7 +35,7 @@ std::set<std::string> getSubstring(std::string str) {
     std::set<std::string> result;
 
     for (int j=0; j < str.size(); j++) {
-        for (int i=0; i <= str.size()-j; i++) {
+        for (int i=1; i <= str.size()-j; i++) {
             //std::cout << str.substr(j,i) << std::endl;
             result.insert(str.substr(j,i));
         }
