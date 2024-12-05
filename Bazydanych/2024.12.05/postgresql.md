@@ -110,3 +110,80 @@ CREATE TABLE account (
 ```
 psql -U car_admin -d db_car -h 127.0.0.1
 ```
+
+**! nadanie uprawnień plikowi i katalogowi**
+
+
+chmod 777 account.sql
+chmod 777 /home/u334531/
+
+#
+
+&nbsp;
+
+```
+CREATE TABLE seller_account (
+    seller_account_id SERIAL PRIMARY KEY,
+    account_id INT UNIQUE NOT NULL REFERENCES account(account_id),
+    number_of_advertizement INT DEFAULT 0,
+    user_ranking FLOAT,
+    total_rank FLOAT
+);
+```
+
+tak lepiej ^
+
+bardziej elastyczne i mniej dwuznaczne
+
+&nbsp;
+
+```
+account_id INT PRIMARY KEY REFERENCES account(account_id) <- tak gorzej
+```
+
+tak gorzej ^
+
+# PgAdmin
+
+```
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+
+sudo apt install pgadmin4
+
+sudo /usr/pgadmin4/bin/setup-web.sh
+
+y
+y
+```
+
+https://www.pgadmin.org/download/pgadmin-4-apt/
+
+```
+#
+# Setup the repository
+#
+
+# Install the public key for the repository (if not done previously):
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+
+# Create the repository configuration file:
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+
+#
+# Install pgAdmin
+#
+
+# Install for both desktop and web modes:
+sudo apt install pgadmin4
+
+# Install for desktop mode only:
+sudo apt install pgadmin4-desktop
+
+# Install for web mode only: 
+sudo apt install pgadmin4-web 
+
+# Configure the webserver, if you installed pgadmin4-web:
+sudo /usr/pgadmin4/bin/setup-web.sh
+```
