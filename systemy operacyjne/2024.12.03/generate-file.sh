@@ -5,6 +5,10 @@ path2='/tmp/data/random'
 path3='/tmp/data/various'
 
 
+mkdir -p $path1
+mkdir -p $path2
+mkdir -p $path3
+
 
 dd if=/dev/zero of=$path1/empty1 bs=10M count=1
 dd if=/dev/zero of=$path1/empty2 bs=10M count=1

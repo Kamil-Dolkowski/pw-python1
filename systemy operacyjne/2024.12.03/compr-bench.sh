@@ -59,11 +59,9 @@
     echo -en "$(echo "$result_c/5" | bc -l | awk '{printf "%.8f",$0}')\t"
     echo -en "$(echo "$result_d/5" | bc -l | awk '{printf "%.8f",$0}')\t"
 
-    #ls -l $tmp_dir
-
     original_file=$(du $tmp_dir/archive.tar | awk '{print $1}')
     compress_file=$(du $tmp_dir/archive.tar.$compress_file_extension | awk '{print $1}')
-    #ls -l $tmp_dir
+
     echo "100*$compress_file/$original_file" | bc -l | awk '{printf "%.1f",$0}' && echo "%"
 }
 
@@ -122,7 +120,7 @@ tmp_dir=$(mktemp -d)
 
 
 for path in "$@" ; do
-    tar cvf "$tmp_dir/archive.tar" $path > /dev/null
+    tar cvf "$tmp_dir/archive.tar" $path > /dev/null 2> /dev/null
 
     echo -e "\n$path"
     echo -e "name\tcompress\tdecompress\tratio"
@@ -150,8 +148,6 @@ for path in "$@" ; do
     echo -en "7z\t"
     compress_type="7z"
     5_tests
-
-    #rm $tmp_dir/archive.tar
 
     rm $tmp_dir/*
 done
