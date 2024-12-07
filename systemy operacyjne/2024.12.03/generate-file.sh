@@ -1,8 +1,8 @@
 #!/bin/bash
 
-path1='tmp/data/empty'
-path2='tmp/data/random'
-path3='tmp/data/various'
+path1='/tmp/data/empty'
+path2='/tmp/data/random'
+path3='/tmp/data/various'
 
 
 
