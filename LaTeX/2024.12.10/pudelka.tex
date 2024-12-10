@@ -1,0 +1,95 @@
+\documentclass[a4paper]{article}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+% rodzaje pudelek
+% \mbox{tekst} make box 			
+% \makebox[szer][poz]{tekst}
+% \fbox{tekst} frame box			
+% \framebox[szer][poz]{tekst} poz = l,r,s
+\begin{document}
+Ala ma czternaście kotów w pudełku wygląda następująco
+
+\mbox{Ala ma czternaście kotów}
+
+lub
+
+\fbox{Ala ma czternaście kotów}
+
+lub
+
+\makebox[8cm][r]{Ala ma czternaście kotów}
+
+lub
+
+\makebox[8cm][l]{Ala ma czternaście kotów}
+
+lub
+
+\makebox[8cm][c]{Ala ma czternaście kotów}
+
+lub
+
+\framebox[8cm][r]{Ala ma czternaście kotów}
+
+lub
+
+\framebox[8cm][c]{Ala ma czternaście kotów}
+
+lub
+
+\framebox[8cm][l]{Ala ma czternaście kotów}
+
+\framebox[2mm]{Ala ma czternaście kotów}
+
+
+Zadanie: zrobić S przekreślone
+
+\makebox[0pt][s]{/}S
+% depth - glebokosc
+% \totalheight - 
+
+lub jeszcze z totalheight
+
+\makebox[6\totalheight]{Teksty}
+
+\makebox[4\totalheight]{Teksty}
+
+\makebox[2\totalheight]{Teksty}
+
+\makebox[8\totalheight]{Teksty}
+
+\framebox[8\totalheight]{Teksty}
+
+\framebox[6\totalheight]{Teksty}
+
+\framebox[4\totalheight]{Teksty}
+
+\framebox[2\totalheight]{Teksty}
+% \raisebox{parametr}{tekst} - podnieść pudełko
+% miara wysokosci litery x - 1ex - podwyzszy tekst w lini 
+Na przykład opuszczony C\raisebox{-0.7ex}{Z}AC\raisebox{-0.7ex}{Z}A i 
+podniesiony \raisebox{1ex}{Czarek}\\
+% poz = b - bottom, t - top
+\parbox[t]{5cm}{To jest nasz paragraf, który ma 
+mieć około 7 cm szerokości To jest nasz paragraf, który ma 
+mieć około 7 cm szerokościTo jest nasz paragraf, który ma 
+mieć około 7 cm szerokościTo jest nasz paragraf, który ma 
+mieć około 7 cm szerokościTo jest nasz paragraf, który ma 
+mieć około 7 cm szerokości}
+%% przypisy nie w tekscie
+\begin{minipage}[t]{4cm}
+mieć około 7 cm szerokościTo jest nasz paragraf, który ma 
+mieć około 7 cm szerokościTo jest nasz paragraf, który ma 
+mieć około 7 cm szerokościTo jest nasz paragraf, który ma 
+mieć około 7 cm szerokości
+\end{minipage}
+\vspace{1cm}
+
+\parbox{4cm}{TO JEST PUDEŁKO O SZEROKOŚCI PEWNEJ 
+nie mającej\footnotemark długości}
+
+
+\end{document}
