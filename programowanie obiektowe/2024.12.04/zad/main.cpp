@@ -46,7 +46,17 @@ std::set<std::string> getSubstring(std::string str) {
 
 // Zad.3
 
+// #include <iostream>
+// #include <array>
+// #include <algorithm>
 
+// int main()
+// {
+//     std::array<int,11> arr = {1,4,7,6,9,0,3,4,5,2,1};
+//     // std::swap
+    
+//     return 0;
+// }
 
 
 int main() {
