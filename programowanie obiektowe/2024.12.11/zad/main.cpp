@@ -81,40 +81,40 @@ private:
     }
 
 
-    // //NIEZROBIONY POMYSL:
+    // //INNY POMYSL:
 
-    // template<typename T>
-    // static void file_read(std::ifstream &file, std::unordered_map<std::string, T> &map) {
-    //     std::string key;
-    //     std::string value_str;
+    template<typename T>
+    static void file_read(std::ifstream &file, std::unordered_map<std::string, T> &map) {
+        std::string key;
+        std::string value_str;
 
-    //     if (file.is_open()) {
-    //         while (!file.eof()) {
-    //             getline(file, key, '=');
-    //             if (key == "") break;
-    //             getline(file, value_str, '\n');
+        if (file.is_open()) {
+            while (!file.eof()) {
+                getline(file, key, '=');
+                if (key == "") break;
+                getline(file, value_str, '\n');
                 
                 
+                if (std::is_same_v<T, int>) {
+                // constexpr bool isInt = typeid(T) == typeid(int);
 
-    //             // constexpr bool isInt = typeid(T) == typeid(int);
-
-    //             if (typeid(T) == typeid(int)) {
-    //                 value_str=stoi(value_str);
-    //                 map[key] = value_str;
-    //             } else {
-    //                 // map[key] = value_str;
-    //             }
+                // if (typeid(T) == typeid(int)) {
+                    value_str=stoi(value_str);
+                    map[key] = value_str;
+                } else {
+                    map[key] = value_str;
+                }
                 
                 
-    //             std::cout << key << ": " << value_str <<std::endl;
-    //         }
+                std::cout << key << ": " << value_str <<std::endl;
+            }
 
-    //         file.close();
-    //     } else {
-    //         std::cout << "Error: File does not exist." << std::endl;
-    //     }
+            file.close();
+        } else {
+            std::cout << "Error: File does not exist." << std::endl;
+        }
 
-    // }
+    }
 
     std::unordered_map<std::string, std::string> string_string_map;
     std::unordered_map<std::string, int> string_int_map;
