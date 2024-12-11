@@ -1,0 +1,2 @@
+config_int1=2
+config_int2=10

@@ -54,7 +54,11 @@
         "typeinfo": "cpp",
         "cinttypes": "cpp",
         "map": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "ratio": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     }
 } // {
 //     "files.associations": {
