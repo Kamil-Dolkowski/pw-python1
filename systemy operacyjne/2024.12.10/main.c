@@ -4,33 +4,70 @@
 #include <signal.h>
 #include <string.h>
 
-void handler(int signo)
-{
-	printf("Wystąpił sygnał %d (%s)\n", 
-	       signo,
-	       strsignal(signo));
+char *buffer = NULL;
+char *fileName = NULL;
 
-	exit(EXIT_FAILURE);
+void handler_sigint(int signo) {
+    char choice[1];
+    choice[0] = 'c';
+
+    while(choice[0] != 'y' && choice[0] != 'n') {
+        printf("\nCzy na pewno zakończyć program? (y/n): ");
+        scanf("%1s", choice);
+
+        if (choice[0] == 'y') {
+            printf("Zakończono program.\n");
+            exit(EXIT_FAILURE);
+        } else if (choice[0] == 'n') {
+            return;
+        } else {
+            printf("Błąd: Niepoprawny wybór.\n");
+        }
+    }
 }
 
-long int findSize(char *fileName) 
-{ 
-    FILE* fp = fopen(fileName, "r"); 
-  
-    if (fp == NULL) { 
-        printf("File Not Found!\n"); 
-        return -1; 
-    } 
-  
-    fseek(fp, 0L, SEEK_END); 
-  
-    long int size = ftell(fp); 
-  
-    fclose(fp); 
-  
-    return size; 
-} 
+void handler_sigusr1(int signo) {
+    FILE *file = fopen(fileName, "r");
+    if (file != NULL) {
+        if (fseek(file, 0L, SEEK_END) == 0) {
+            long int bufsize = ftell(file);
 
+            if (bufsize == -1) {
+                printf("Błąd: nie określono rozmiaru pliku.\n");
+                exit(EXIT_FAILURE);
+            }
+
+            buffer = malloc(sizeof(char) * (bufsize + 1));
+
+            if (fseek(file, 0L, SEEK_SET) != 0) {
+                printf("Błąd: nie znaleziono poczatku pliku.\n");
+                exit(EXIT_FAILURE);
+            }
+
+            size_t newLen = fread(buffer, sizeof(char), bufsize, file);
+
+            if (ferror(file) != 0) {
+                fputs("Błąd: błąd podczas wczytywania pliku.", stderr);
+            } else {
+                buffer[newLen++] = '\0';
+            }
+        }
+
+        fclose(file);
+    } else {
+        printf("Błąd: nie znaleziono pliku '%s'.\n", fileName);
+        exit(EXIT_FAILURE);
+    }
+
+    return;
+}
+
+void handler_sigusr2(int signo) {
+    if (buffer != NULL) {
+        free(buffer);
+    }
+    return;
+}
 
 
 
@@ -38,56 +75,45 @@ long int findSize(char *fileName)
 
 
 int main(int argc, char **argv) {
-    char *buffer;
-    long int fileSize;
+    pid_t pid = getpid();
+    fileName = argv[1];
 
-    struct sigaction act = { 0 };
-	act.sa_handler = &handler;
-	if (sigaction(SIGUSR1, &act, NULL) == -1)
+    struct sigaction act_sigusr1 = { 0 }, act_sigusr2 = { 0 }, act_sigint = { 0 };
+    act_sigusr1.sa_handler = &handler_sigusr1;
+    act_sigusr2.sa_handler = &handler_sigusr2;
+	act_sigint.sa_handler = &handler_sigint;
+
+	if (sigaction(SIGUSR1, &act_sigusr1, NULL) == -1)
 	{
 		exit(EXIT_FAILURE);
 	}
 
-	if (sigaction(SIGUSR2, &act, NULL) == -1)
+	if (sigaction(SIGUSR2, &act_sigusr2, NULL) == -1)
 	{
 		exit(EXIT_FAILURE);
 	}
 
-
+    if (sigaction(SIGINT, &act_sigint, NULL) == -1)
+	{
+		exit(EXIT_FAILURE);
+	}
     
-
 
     if (argv[1]){
-        fileSize = findSize(argv[1]);
-        buffer = malloc(fileSize*sizeof(char));
+        while (1) {
+            printf("\n==Zawartość pliku %s:\n", argv[1]);
+            
+            kill(pid, SIGUSR2);
+            kill(pid, SIGUSR1);
 
-        FILE * file;
-        file = fopen(argv[1], "r");
+            printf("%s\n",buffer);
 
-        if (file==NULL){
-            printf("Error: file does not exists.\n");
-            return -1;
+            sleep(1);
         }
-
-        printf("File size: %ld\n",fileSize);
-        fgets(buffer, fileSize, file);
-
-        printf("File:\n%s\n",buffer);
-        
-
-
-
-        fclose(file);
-        
-
     } else {
-        printf("Error: No path argument.\n");
+        printf("Błąd: Nie podano ścieżki do pliku.\n");
         return -1;
     }
-    
-    
-
-    
 
     return 0;
 }
