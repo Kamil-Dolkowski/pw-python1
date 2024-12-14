@@ -16,6 +16,7 @@ void handler_sigint(int signo) {
         scanf("%1s", choice);
 
         if (choice[0] == 'y') {
+            free(buffer);
             printf("Zakończono program.\n");
             exit(EXIT_FAILURE);
         } else if (choice[0] == 'n') {
@@ -37,6 +38,7 @@ void handler_sigusr1(int signo) {
                 exit(EXIT_FAILURE);
             }
 
+            if (buffer != NULL) free(buffer);
             buffer = malloc(sizeof(char) * (bufsize + 1));
 
             if (fseek(file, 0L, SEEK_SET) != 0) {
@@ -65,6 +67,7 @@ void handler_sigusr1(int signo) {
 void handler_sigusr2(int signo) {
     if (buffer != NULL) {
         free(buffer);
+        buffer = NULL;
     }
     return;
 }
@@ -77,6 +80,8 @@ void handler_sigusr2(int signo) {
 int main(int argc, char **argv) {
     pid_t pid = getpid();
     fileName = argv[1];
+
+    printf("PID: %d\n", pid);
 
     struct sigaction act_sigusr1 = { 0 }, act_sigusr2 = { 0 }, act_sigint = { 0 };
     act_sigusr1.sa_handler = &handler_sigusr1;
@@ -100,13 +105,15 @@ int main(int argc, char **argv) {
     
 
     if (argv[1]){
+        kill(pid, SIGUSR1);
         while (1) {
             printf("\n==Zawartość pliku %s:\n", argv[1]);
             
-            kill(pid, SIGUSR2);
-            kill(pid, SIGUSR1);
+            // kill(pid, SIGUSR2);
+            // kill(pid, SIGUSR1);
 
-            printf("%s\n",buffer);
+            printf("%s",buffer);
+            printf("\n");
 
             sleep(1);
         }
