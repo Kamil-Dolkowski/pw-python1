@@ -18,7 +18,7 @@ void handler_sigint(int signo) {
         if (choice[0] == 'y') {
             free(buffer);
             printf("Zakończono program.\n");
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         } else if (choice[0] == 'n') {
             return;
         } else {
@@ -79,7 +79,6 @@ void handler_sigusr2(int signo) {
 
 int main(int argc, char **argv) {
     pid_t pid = getpid();
-    fileName = argv[1];
 
     printf("PID: %d\n", pid);
 
@@ -105,6 +104,8 @@ int main(int argc, char **argv) {
     
 
     if (argv[1]){
+        fileName = argv[1];
+
         kill(pid, SIGUSR1);
         while (1) {
             printf("\n==Zawartość pliku %s:\n", argv[1]);
