@@ -24,3 +24,5 @@ dd if=/dev/urandom of=$path2/random4 bs=10M count=1
 dd if=/dev/urandom of=$path2/random5 bs=10M count=1
 
 # dd if=/dev/zero of=tmp/data/empty/empty5 bs=10M count=1
+
+# pliki do katalogu various z https://github.com/MiloszKrajewski/SilesiaCorpus
