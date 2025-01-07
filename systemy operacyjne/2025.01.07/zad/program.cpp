@@ -2,23 +2,21 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <condition_variable>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <fstream>
-
-
+#include <vector>
+#include <mutex>
 
 #define TAB_LENGTH 10
 
 std::mutex mutex;
-std::condition_variable cv;
 unsigned int tab[TAB_LENGTH];
 
 void threadFunc(size_t start, size_t end, std::string content) {
-    std::unique_lock lock(mutex);
-
     unsigned int counter[TAB_LENGTH];
+
+    std::cout << "thread: start=" << start << ", end=" << end << std::endl;
 
     for (int i=0; i<TAB_LENGTH; i++) {
         counter[i] = 0;
@@ -33,9 +31,8 @@ void threadFunc(size_t start, size_t end, std::string content) {
     }
 
     for (int i=0; i<TAB_LENGTH; i++) {
-        //pthread_mutex_lock(&shr->mutex);
+        std::unique_lock lock(mutex);
         tab[i] += counter[i];
-        //pthread_mutex_unlock(&shr->mutex);
     }
 }
 
@@ -47,10 +44,10 @@ std::string getFileContent(const std::string& path) {
 }
 
 
-int main(int argc, char *argv[]) {
-    // std::thread t(threadFunc);
-    struct stat statbuf;
 
+int main(int argc, char *argv[]) {
+    struct stat statbuf;
+    std::vector<std::thread> threads;
 
     // zerowanie tablicy
     for (int i=0; i<TAB_LENGTH; i++) {
@@ -83,32 +80,24 @@ int main(int argc, char *argv[]) {
     size_t end = start + shift;
 
     
-
-
-
-    for (int i=0; i<number_of_threads; i++) {
-        std::thread t(threadFunc, start, end, content);
+    for (int i = 0; i < number_of_threads; i++) {
+        threads.push_back(std::thread(threadFunc, start, end, content));
         start = end;
         end = end + shift;
         if (end + shift >= statbuf.st_size) end = statbuf.st_size+1;
     }
 
-
-    
-
-
-    for (int i=0; i<number_of_threads; i++) {
-        // printf("%d = %d\n", i, pid_table[i]); 
+    for (int i = 0; i < number_of_threads; i++) {
+        threads[i].join();
     }
 
     printf("\nNumber of digits in the file:\n");
 
-    for (int i=0; i<TAB_LENGTH; i++) {
+    for (int i = 0; i < TAB_LENGTH; i++) {
         std::cout << i << " = " << tab[i] << std::endl;
-        //printf("%d = %d\n", i, shr->tab[i]);
     }
 
     close(fd);
-
+    
     return 0;
 }
