@@ -13,10 +13,10 @@
 std::mutex mutex;
 unsigned int tab[TAB_LENGTH];
 
-void threadFunc(size_t start, size_t end, std::string content) {
+void threadFunc(unsigned long int start, unsigned long int end, std::string content) {
     unsigned int counter[TAB_LENGTH];
 
-    std::cout << "thread: start=" << start << ", end=" << end << std::endl;
+    // std::cout << "thread: start=" << start << ", end=" << end << std::endl;
 
     for (int i=0; i<TAB_LENGTH; i++) {
         counter[i] = 0;
@@ -75,16 +75,20 @@ int main(int argc, char *argv[]) {
 
     std::string content = getFileContent(argv[1]);
 
-    size_t start = 0;
-    size_t shift = statbuf.st_size/number_of_threads;
-    size_t end = start + shift;
+    unsigned long int start = 0;
+    unsigned long int shift = statbuf.st_size/number_of_threads;
+    unsigned long int end = start + shift;
 
     
     for (int i = 0; i < number_of_threads; i++) {
+        // std::cout << i << ": start=" << start << ", end=" << end << ", shift=" << shift << std::endl;
         threads.push_back(std::thread(threadFunc, start, end, content));
         start = end;
-        end = end + shift;
-        if (end + shift >= statbuf.st_size) end = statbuf.st_size+1;
+        if (end + shift >= statbuf.st_size) {
+            end = statbuf.st_size;
+        } else {
+            end = end + shift;
+        }
     }
 
     for (int i = 0; i < number_of_threads; i++) {
