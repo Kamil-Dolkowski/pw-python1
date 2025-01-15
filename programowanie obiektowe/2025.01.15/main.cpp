@@ -21,10 +21,19 @@ public:
     virtual double length() const override {
         return sqrt( pow(x,2) + pow(y,2) );
     }
-    virtual void normalize() override {}
+    virtual void normalize() override {
+        double vlength = length();
 
-    T getX() { return x; }
-    T getY() { return y; }
+        if (vlength == 0) throw std::invalid_argument("Vector length = 0.");
+
+        x = x/vlength;
+        y = y/vlength;
+        
+    }
+
+    T getX() const { return x; }
+    T getY() const { return y; }
+
 private:
     T x;
     T y;
@@ -40,6 +49,8 @@ private:
 //     }
 //     virtual void normalize() override {}
 // private:
+//     T x;
+//     T y;
 //     T z;
 // };
 
@@ -47,7 +58,7 @@ private:
 template<typename T>
 std::ostream& operator<<(std::ostream &os, const Vector2D<T> &v) 
 {
-    os << "(" << v.getX() << "," << v.getY() << ")" << std::endl;
+    os << "(" << v.getX() << "," << v.getY() << ")" ;
     return os;
 }
 
@@ -55,10 +66,23 @@ std::ostream& operator<<(std::ostream &os, const Vector2D<T> &v)
 
 
 int main() {
-    Vector2D<int> v2d(4,3);
-    std::cout << v2d.length() << std::endl;
-    std::cout << v2d << std::endl;
+    Vector2D<double> v2d(0,0);
 
+
+    try {
+        std::cout << "Vector2D: " << v2d << std::endl;
+        std::cout << "length: " << v2d.length() << std::endl;
+        
+        std::cout << "\nnormalize Vector2D\n" << std::endl;
+        v2d.normalize();
+
+        std::cout << "Vector2D: " << v2d << std::endl;
+        std::cout << "length: " << v2d.length() << std::endl;
+
+    } catch (const std::exception &e) {
+        std::cout << "e" << std::endl;
+    }
+    
     return 0;
 }
 
