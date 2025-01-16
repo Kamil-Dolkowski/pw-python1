@@ -213,12 +213,12 @@ $$;
 ## Dane:
 
 ```sql
-INSERT INTO products(name, stock, price) VALUES 
+INSERT INTO products (name, stock, price) VALUES 
 ('chleb', 10, 5.00),
 ('masło', 20, 10.00),
 ('napój', 28, 3.50);
 
-INSERT INTO orders(product_id, quantity, order_date) VALUES 
+INSERT INTO orders (product_id, quantity, order_date) VALUES 
 (1, 1, '2025-01-01'),
 (1, 2, '2025-01-01'),
 (2, 3, '2025-01-01');
