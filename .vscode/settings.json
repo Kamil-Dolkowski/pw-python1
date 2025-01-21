@@ -61,7 +61,8 @@
         "thread": "cpp",
         "stdio.h": "c",
         "condition_variable": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "list": "cpp"
     }
 } // {
 //     "files.associations": {
