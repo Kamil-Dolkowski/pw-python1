@@ -62,7 +62,8 @@
         "stdio.h": "c",
         "condition_variable": "cpp",
         "mutex": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "chrono": "cpp"
     }
 } // {
 //     "files.associations": {
