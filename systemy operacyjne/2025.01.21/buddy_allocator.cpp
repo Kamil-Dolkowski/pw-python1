@@ -77,9 +77,43 @@ public:
     }
 
     void free(size_t address, size_t block_size) {
+        // === Warunki, wychwytywanie błędnych argumentów ===
+
+        int interval = pow(2, (division_limit));
+
+        // walidacja address
+        if (address % interval != 0 || address > memory_size) {
+             throw std::invalid_argument("In method free() argument 'address' must be the existing address.");
+        }
+
+        // walidacja block_size
+        if (block_size != pow(2, (ceil(log2(block_size)))) || block_size > memory_size || block_size < memory_size/pow(2,division_limit)) {
+             throw std::invalid_argument("In method free() argument 'block_size' must be the existing block size.");
+        }
+
+        bool is_block_size = false;
+        for (const auto &element : free_blocks) {
+            if (element.first == block_size) {
+                is_block_size = true;
+                break;
+            }
+        }
+
+        if (!is_block_size) throw std::logic_error("Block with this memory size does not exists.");
+
         if (std::find(free_blocks[block_size].begin(), free_blocks[block_size].end(), address) != free_blocks[block_size].end()) {
             throw std::out_of_range("Can't free (this address was already free).");
         }
+
+        // === Algorytm free ===
+
+        // w przypadku zwolnienia całej pamięci
+        if (block_size == memory_size) {
+            for (int i=block_size; i >= memory_size/pow(2,division_limit); i-=pow(2,division_limit)) {
+                free_blocks.erase(i);
+            }
+        }
+
 
         size_t friend_address;
 
@@ -88,20 +122,25 @@ public:
 
         if (std::find(free_blocks[block_size].begin(), free_blocks[block_size].end(), friend_address) != free_blocks[block_size].end()) {
             // std::cout << "znaleziono znajomego (" << block_size << ")" << std::endl;
-
+            
             free_blocks[block_size].pop_front();
 
-            if (address < friend_address) {
-                return free(address, block_size * 2);
-            } else {
-                return free(friend_address, block_size * 2);
+            if (free_blocks[block_size].empty()) {
+                for (int i=block_size; i >= memory_size/pow(2,division_limit); i-=pow(2,division_limit)) {
+                    free_blocks.erase(i);
+                }
+
+                free_blocks.erase(block_size);
+
+                // std::cout << "pop " << block_size << std::endl;
+                // printFreeBlocks();
             }
+
+            free(address, block_size * 2);
 
         } else {
             free_blocks[block_size].push_front(address);
         }
-
-        
     }
 
     void printFreeBlocks() {
@@ -146,6 +185,27 @@ int main() {
 
 
 
+        // std::cout << "\n-----Allocation: 40" << std::endl;
+
+        // p = ba.alloc(40);
+        // printAllocationResult(p);
+
+        // std::cout << std::endl;
+        // ba.printFreeBlocks();
+
+
+
+
+        // std::cout << "\n-----Allocation: 40" << std::endl;
+
+        // p = ba.alloc(40);
+        // printAllocationResult(p);
+
+        // std::cout << std::endl;
+        // ba.printFreeBlocks();
+
+
+
         std::cout << "\n-----Allocation: 40" << std::endl;
 
         p = ba.alloc(40);
@@ -156,42 +216,29 @@ int main() {
 
 
 
+        // std::cout << "\n-----Free (256, 128)" << std::endl;
 
-        std::cout << "\n-----Allocation: 40" << std::endl;
+        // ba.free(256, 128);
 
-        p = ba.alloc(40);
-        printAllocationResult(p);
-
-        std::cout << std::endl;
-        ba.printFreeBlocks();
+        // std::cout << std::endl;
+        // ba.printFreeBlocks();
 
 
 
-        std::cout << "\n-----Allocation: 40" << std::endl;
+        std::cout << "\n-----Free (0, 64)" << std::endl;
 
-        p = ba.alloc(40);
-        printAllocationResult(p);
+        ba.free(0, 64);
 
         std::cout << std::endl;
         ba.printFreeBlocks();
 
 
+        // std::cout << "\n-----Free (0, 64)" << std::endl;
 
-        std::cout << "\n-----Free (256, 128)" << std::endl;
+        // ba.free(0, 64);
 
-        ba.free(256, 128);
-
-        std::cout << std::endl;
-        ba.printFreeBlocks();
-
-
-
-        std::cout << "\n-----Free (0, 128)" << std::endl;
-
-        ba.free(0, 128);
-
-        std::cout << std::endl;
-        ba.printFreeBlocks();
+        // std::cout << std::endl;
+        // ba.printFreeBlocks();
 
 
     } catch (const std::exception &e) {
