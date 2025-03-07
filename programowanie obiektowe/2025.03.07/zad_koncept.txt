@@ -1,0 +1,41 @@
+# === Klasy abstrakcyjne === # 
+
+class TextLines:
+    getNumberOfLines()
+    readLine(numer wiersza) -> wiersz o zadanym numerze
+    writeLine(linia) -> dodanie wiersza na końcu
+    writeLine(numer wiersza, linia) -> dodanie wiersza w konkretnej pozycji
+    
+    -> nie pozwalamy na dodanie wiersza "z przerwą": jak mamy 1, 2, 3 to nie można dodać 7
+    -> gdy wiersz istnieje to zostaje nadpisany
+
+    deleteLine(numer wiersza) -> usunięcie i przenumerowanie
+
+class IdentifiedTextLines: TextLines (identyfikatory nie muszą być unikalne; pełnią bardziej rolę tagów, etykiet)
+    readLine(identyfikator) -> wiersz/wiersze posiadające zadany identyfkator
+    writeLine(identyfikator, linia) -> dodanie wiersza na końcu z zadanym identyfikatorem
+    writeLine(numer wiersza, identyfikator, linia) -> dodanie wiersza z zadanym identyfikatorem w konkretnej pozycji
+    deleteLine(identyfikator)
+
+
+3 opcje:
+
+class UniquelyIdentifiedTextLines: TextLines
+
+class UniquelyIdentifiedTextLines: IdentifiedTextLines
+
+class UniquelyIdentifiedTextLines: 
+    container: IdentifiedTextLines
+
+
+# === Klasy "realne" === # 
+
+class TextLinesInMemory: TextLines
+class TextLinesInFile: TextLines
+class TextLinesInDB: TextLines
+
+class IdentifiedTextLinesInMemory: IdentifiedTextLines
+...
+
+class UniquelyIdentifiedTextLinesInMemory: UniquelyIdentifiedTextLines
+...
