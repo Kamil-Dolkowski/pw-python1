@@ -21,7 +21,7 @@ def interpolacja(x, df_nodes, a):
         y += element
     return y
 
-def interpolacja_wzor(df_nodes, a):
+def interpolacja_wzor_print(df_nodes, a):
     print(f"F(x) = {a[0]} + ", end="")
     length = len(a)
     for i in range(1,length):
@@ -31,6 +31,17 @@ def interpolacja_wzor(df_nodes, a):
         if i != length-1: 
             print(" + ", end="")
     print()
+
+def interpolacja_wzor(df_nodes, a):
+    wzor = f"F(x) = {a[0]} + "
+    length = len(a)
+    for i in range(1,length):
+        wzor += f"{a[i]}*"
+        for j in range(0,i):
+            wzor += f"(x - {df_nodes['x'][j]})"
+        if i != length-1: 
+            wzor +=" + "
+    return wzor
 
 def interpolacja_wykres(df_all, a, precision = 1):
     x_values = []
@@ -134,8 +145,10 @@ def main():
         print("\nBłąd: Brak takiej opcji.")
         return
     
-    print("\nWzór interpolacji:")
-    interpolacja_wzor(df_nodes, a)
+    with open("wzor.txt", "w") as f:
+        wzor = interpolacja_wzor(df_nodes, a)
+        f.write(wzor)
+        print("\nZapisano wzór interpolacji do pliku 'wzor.txt'")
 
     option = input("\nChcesz wygładzić wykres? [T/N]\n(za pomocą interpolacji): ")
     if option in ["T", "t"]:
