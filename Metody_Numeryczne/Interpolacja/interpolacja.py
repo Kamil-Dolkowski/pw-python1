@@ -134,8 +134,10 @@ def main():
         print("\nBłąd: Brak takiej opcji.")
         return
     
-    print("\nWzór interpolacji:")
-    interpolacja_wzor(df_nodes, a)
+    option = input("\nWypisać wzór interpolacyjny Newtona? [T/N]: ")
+    if option in ["T", "t"]:
+        print("\nWzór interpolacyjny Newtona:")
+        interpolacja_wzor(df_nodes, a)
 
     option = input("\nChcesz wygładzić wykres? [T/N]\n(za pomocą interpolacji): ")
     if option in ["T", "t"]:
