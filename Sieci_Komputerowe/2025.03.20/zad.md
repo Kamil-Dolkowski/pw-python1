@@ -28,7 +28,19 @@ PING 10.123.1.255 (10.123.1.255) 56(84) bytes of data.
 From 148.81.246.1 icmp_seq=1 Destination Host Unreachable
 ```
 
-3. 
+3. nmap -p- 127.0.0.1
+```
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-03-21 09:10 CET
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000027s latency).
+Not shown: 65532 closed tcp ports (conn-refused)
+PORT     STATE SERVICE
+22/tcp   open  ssh
+631/tcp  open  ipp
+5432/tcp open  postgresql
+
+Nmap done: 1 IP address (1 host up) scanned in 1.37 seconds
+```
 
 4. cat /etc/resolv.conf
 ```
