@@ -6,11 +6,11 @@ def generate_data(file_path, size, max_value):
     with open(file_path, "w") as file_out:
         for i in range(size-1):
             number = random.randint(0, max_value)
-            file_out.write(str(number) + "\n")
+            file_out.write(str(number) + ",z" + str(number) + "\n")
             if i % 100_000 == 0:
                 print(f"{i} of {size}")
         number = random.randint(0, max_value)
-        file_out.write(str(number))
+        file_out.write(str(number) + ",z" + str(number) )
 
 def divide_file(file_path, size, working_directory):
     with open(file_path, "r") as file_data:
@@ -64,14 +64,14 @@ def sort_data_in_directory(working_directory):
         data = None
 
         with open(file_path, "r") as source_file:
-            data = [int(line.strip()) for line in source_file]
+            data = [ [int(line.strip().split(",",1)[0]), line.strip().split(",",1)[1]] for line in source_file ]
 
-        data.sort()
+        data = sorted(data)
 
         with open(file_path, "w") as result_file:
             for i in range(len(data)-1):
-                result_file.write(str(data[i]) + "\n")
-            result_file.write(str(data[-1]))
+                result_file.write(str(data[i][0]) + "," + data[i][1] + "\n")
+            result_file.write(str(data[-1][0]) + "," + data[-1][1] )
 
         if c % 10 == 0:
             print(f"{c} of {number_of_files}")
@@ -91,14 +91,14 @@ def merge_two_files(working_directory, file_in_1_name, file_in_2_name, file_out_
 
                 while True:
                     if line_1 and line_2:
-                        v1 = int(line_1)
-                        v2 = int(line_2)
+                        v1 = int(line_1.split(",",1)[0])
+                        v2 = int(line_2.split(",",1)[0])
 
                         if v1 < v2:
-                            file_out.write(str(v1))
+                            file_out.write(line_1)
                             line_1 = file_in_1.readline().strip()
                         else:
-                            file_out.write(str(v2))
+                            file_out.write(line_2)
                             line_2 = file_in_2.readline().strip()
                     elif line_1 and not line_2:
                         file_out.write(line_1)
@@ -196,7 +196,7 @@ def check_numbers_in_files(original_file_name, working_directory):
 
     with open(original_file_name, "r") as original_file:
         for line in original_file:
-            number = line.strip()
+            number = line.strip().split(",",1)[0]
             if not number in numbers:
                 numbers[number] = 0
             numbers[number] += 1
@@ -204,7 +204,7 @@ def check_numbers_in_files(original_file_name, working_directory):
     sorted_file_name = os.path.join(working_directory, files[0])
     with open(sorted_file_name, "r") as sorted_file:
         for line in sorted_file:
-            number = line.strip()
+            number = line.strip().split(",",1)[0]
             if not number in numbers:
                 numbers[number] = 0
             numbers[number] -= 1
@@ -223,10 +223,10 @@ def is_sorted(working_directory):
         raise NameError("Too many files.")
 
     with open(sorted_file_name, "r") as sorted_file:
-        x = int(sorted_file.readline().strip())
+        x = int(sorted_file.readline().strip().split(",",1)[0])
 
         for line in sorted_file:
-            y = int(line.strip())
+            y = int(line.strip().split(",",1)[0])
             if x > y:
                 return False
             x = y
@@ -240,8 +240,8 @@ def main():
     clear_directory("work")
 
     begin = timer()
-    # generate_data("data_test.dat", 100_000, 20)
-    generate_data("data_test.dat", 4, 20)
+    # generate_data("data_test.dat", 1_000_000, 2_000_000)
+    generate_data("data_test.dat", 10, 20)
     end = timer()
     print(f"Generate time: {end - begin} s")
     
@@ -264,8 +264,10 @@ def main():
 
     print("\n========= Sprawdzenie =========")
 
-    result = check_lengths_of_files("data_test.dat", "work")
-    print(f"Ta sama długość plików: {result}")
+    begin = timer()
+
+    # result = check_lengths_of_files("data_test.dat", "work")
+    # print(f"Ta sama długość plików: {result}")
 
     result = check_numbers_in_files("data_test.dat", "work")
     print(f"Te same ilości liczb: \t{result}")
@@ -273,6 +275,8 @@ def main():
     result = is_sorted("work")
     print(f"Dane posortowane: \t{result}")
 
+    end = timer()
+    print(f"\nCheck time: {end - begin} s")
 
 if __name__ == "__main__":
     main()
