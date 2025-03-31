@@ -1,4 +1,5 @@
 import pandas as pd
+from sympy import symbols, expand, sympify
 import matplotlib.pyplot as plt
 
 # Wyznaczenie tablicy ilorazów różnicowych
@@ -21,17 +22,32 @@ def interpolacja(x, df_nodes, a):
         y += element
     return y
 
+def interpolacja_postac_ogolna(x, F):
+    x_symbol = symbols('x')
+    return F.subs(x_symbol, x)
+
+# Wzory
+def interpolacja_wzor_postac_ogolna(df_nodes, a):
+    x = symbols('x')
+    F_str = interpolacja_wzor(df_nodes, a)
+    F = sympify(F_str)
+    expanded_F = expand(F)
+    return expanded_F
+
 def interpolacja_wzor(df_nodes, a):
-    print(f"F(x) = {a[0]} + ", end="")
+    wzor = f"{a[0]} + "
     length = len(a)
     for i in range(1,length):
-        print(f"{a[i]}*", end="")
+        wzor += f"{a[i]}*"
         for j in range(0,i):
-            print(f"(x - {df_nodes['x'][j]})", end="")
+            wzor += f"(x - {df_nodes['x'][j]})"
+            if j != i-1:
+                wzor +="*"
         if i != length-1: 
-            print(" + ", end="")
-    print()
+            wzor +=" + "
+    return wzor
 
+# Wygładzenie wykresu
 def interpolacja_wykres(df_all, a, precision = 1):
     x_values = []
     x_i = df_all['x'].min()
@@ -46,8 +62,10 @@ def interpolacja_wykres(df_all, a, precision = 1):
 
     df_nodes = df_all.dropna()
     df_nodes.reset_index(inplace=True, drop=True)
+    
+    F = interpolacja_wzor_postac_ogolna(df_nodes, a)
 
-    df_interpolate['F(x)'] = df_interpolate['x'].apply(lambda x: interpolacja(x, df_nodes, a))
+    df_interpolate['F(x)'] = df_interpolate['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
     plt.plot(df_interpolate['x'], df_interpolate['F(x)'], '-', label="F2(x)")
     plt.plot(df_all['x'], df_all['y'], 'o', label="y2")
@@ -64,7 +82,7 @@ def main():
 
     print("\nFORMAT PLIKU: (.csv/.txt)")
     print("x;y")
-    print("<float>;<float>")
+    print("<int/float>;<int/float>")
     option = input("\nPodaj sposób odczytu danych [1/2]: ")
 
     if option == "1":
@@ -86,7 +104,9 @@ def main():
         a = ilorazy_roznicowe(df_nodes)
         print(f"a = {a}")
 
-        df_all['F(x)'] = df_all['x'].apply(lambda x: interpolacja(x, df_nodes, a))
+        F = interpolacja_wzor_postac_ogolna(df_nodes, a)
+
+        df_all['F(x)'] = df_all['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
         print("\nDane z pliku z wartościami interpolowanymi:")
         print(df_all)
@@ -116,12 +136,14 @@ def main():
         a = ilorazy_roznicowe(df_nodes)
         print(f"a = {a}")
 
-        df_xes['F(x)'] = df_xes['x'].apply(lambda x: interpolacja(x, df_nodes, a))
+        F = interpolacja_wzor_postac_ogolna(df_nodes, a)
+
+        df_xes['F(x)'] = df_xes['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
         print("\nDane z pliku z wartościami interpolowanymi:")
         print(df_xes)
 
-        df_nodes['F(x)'] = df_nodes['x'].apply(lambda x: interpolacja(x, df_nodes, a))
+        df_nodes['F(x)'] = df_nodes['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
         df_all = pd.concat([df_xes, df_nodes], axis=0)
         df_all = df_all.sort_values('x').reset_index(drop=True)
@@ -134,10 +156,25 @@ def main():
         print("\nBłąd: Brak takiej opcji.")
         return
     
+    # === Wypisanie wzoru ===
+
     option = input("\nWypisać wzór interpolacyjny Newtona? [T/N]: ")
     if option in ["T", "t"]:
-        print("\nWzór interpolacyjny Newtona:")
-        interpolacja_wzor(df_nodes, a)
+        option = input("\nKtórą postać wzoru wypisać? [O/I]\n(ogólną/iloczynową): ")
+        if option in ["O", "o"]:
+            print("\nWzór interpolacyjny Newtona (postać ogólna):")
+            wzor = interpolacja_wzor_postac_ogolna(df_nodes, a)
+            print(f"F(x) = {wzor}")
+            
+        elif option in ["I", "i"]:
+            print("\nWzór interpolacyjny Newtona (postać iloczynowa):")
+            wzor = interpolacja_wzor(df_nodes, a)
+            print(f"F(x) = {wzor}")
+
+        else:
+            print("\nBłąd: Niepoprawny wybór.")
+
+    # === Wygładzanie wykresu ===
 
     option = input("\nChcesz wygładzić wykres? [T/N]\n(za pomocą interpolacji): ")
     if option in ["T", "t"]:
