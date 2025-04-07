@@ -6,9 +6,14 @@ import matplotlib.pyplot as plt
 def ilorazy_roznicowe(df_nodes):
     n = len(df_nodes)
     a = df_nodes['y'].tolist()
+
+    print("\nWyznaczanie tablicy ilorazów różnicowych: 0%", end="", flush=True)
+
     for i in range(0,n):
+        print(f"\rWyznaczanie tablicy ilorazów różnicowych: {int(i/(n-1)*100)}%", end="", flush=True)
         for j in range(n-1,i,-1):
             a[j] = (a[j] - a[j-1]) / (df_nodes['x'][j] - df_nodes['x'][j-1-i])
+    print("\rWyznaczanie tablicy ilorazów różnicowych: 100%")
     return a
 
 # Funkcja interpolacyjna (wzór interpolacyjny Newtona)
@@ -29,25 +34,42 @@ def interpolacja_postac_ogolna(x, F):
 # Wzory
 def interpolacja_wzor_postac_ogolna(df_nodes, a):
     F_str = interpolacja_wzor(df_nodes, a)
-    F = sympify(F_str)
+    # F = sympify(F_str)
+    F = F_str
     expanded_F = expand(F)
-    return expanded_F
+    print("Zredukowano wzór")
+    return expanded_F, F_str
 
 def interpolacja_wzor(df_nodes, a):
+    tolerancja = 1e-10
+
     wzor = f"{a[0]} + "
     length = len(a)
+
+    print("\nWyznaczanie wzoru: 0%", end="", flush=True)
+
     for i in range(1,length):
+        print(f"\rWyznaczanie wzoru: {int(i/(length-1)*100)}%", end="", flush=True)
+        # if a[i] == 0:
+        if a[i] == 0 or abs(a[i]) < tolerancja:
+            continue
+        if i != 1 and i != length-1: 
+            wzor +=" + "
+
         wzor += f"{a[i]}*"
         for j in range(0,i):
             wzor += f"(x - {df_nodes['x'][j]})"
             if j != i-1:
                 wzor +="*"
-        if i != length-1: 
-            wzor +=" + "
+
+    # with open("wzor.txt", "w") as f:
+    #     f.write(wzor)
+
+    print("\rWyznaczanie wzoru: 100%")
     return wzor
 
 # Wygładzenie wykresu
-def interpolacja_wykres(df_all, a, precision = 1):
+def interpolacja_wykres(df_all, F, precision = 1):
     x_values = []
     x_i = df_all['x'].min()
 
@@ -58,11 +80,6 @@ def interpolacja_wykres(df_all, a, precision = 1):
     x_values.append(df_all['x'].max())
 
     df_interpolate = pd.DataFrame({'x': x_values})
-
-    df_nodes = df_all.dropna()
-    df_nodes.reset_index(inplace=True, drop=True)
-    
-    F = interpolacja_wzor_postac_ogolna(df_nodes, a)
 
     df_interpolate['F(x)'] = df_interpolate['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
@@ -99,12 +116,13 @@ def main():
         print("\nDane z pliku:")
         print(df_all)
 
-        print("\nTablica ilorazów różnicowych:")
         a = ilorazy_roznicowe(df_nodes)
+        print("\nTablica ilorazów różnicowych:")
         print(f"a = {a}")
 
-        F = interpolacja_wzor_postac_ogolna(df_nodes, a)
+        F, F_str = interpolacja_wzor_postac_ogolna(df_nodes, a)
 
+        print("\nObliczanie wartości interpolowanych ...")
         df_all['F(x)'] = df_all['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
         print("\nDane z pliku z wartościami interpolowanymi:")
@@ -131,17 +149,19 @@ def main():
         print("\nDane z pliku z punktami do wyznaczenia:")
         print(df_xes)
 
-        print("\nTablica ilorazów różnicowych:")
         a = ilorazy_roznicowe(df_nodes)
+        print("\nTablica ilorazów różnicowych:")
         print(f"a = {a}")
 
-        F = interpolacja_wzor_postac_ogolna(df_nodes, a)
+        F, F_str = interpolacja_wzor_postac_ogolna(df_nodes, a)
 
+        print("\nObliczanie wartości interpolowanych ...")
         df_xes['F(x)'] = df_xes['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
         print("\nDane z pliku z wartościami interpolowanymi:")
         print(df_xes)
 
+        print("\nObliczanie wartości interpolowanych ...")
         df_nodes['F(x)'] = df_nodes['x'].apply(lambda x: interpolacja_postac_ogolna(x, F))
 
         df_all = pd.concat([df_xes, df_nodes], axis=0)
@@ -162,12 +182,12 @@ def main():
         option = input("\nKtórą postać wzoru wypisać? [O/I]\n(ogólną/iloczynową): ")
         if option in ["O", "o"]:
             print("\nWzór interpolacyjny Newtona (postać ogólna):")
-            wzor = interpolacja_wzor_postac_ogolna(df_nodes, a)
+            wzor = F
             print(f"F(x) = {wzor}")
             
         elif option in ["I", "i"]:
             print("\nWzór interpolacyjny Newtona (postać iloczynowa):")
-            wzor = interpolacja_wzor(df_nodes, a)
+            wzor = F_str
             print(f"F(x) = {wzor}")
 
         else:
@@ -181,10 +201,13 @@ def main():
             precision = float(input("Wpisz dokładność wykresu: "))
         except ValueError:
             precision = 1
-        interpolacja_wykres(df_all, a, precision)
+        interpolacja_wykres(df_all, F, precision)
 
     
 
 if __name__ == "__main__":
     main()
     print("\nZakończono program")
+
+# Problemy:
+# - Efekt Rungego
