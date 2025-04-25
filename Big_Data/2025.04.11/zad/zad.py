@@ -196,7 +196,7 @@ def main():
     images_directory = "seg_pred"
 
     begin = time.time()
-    # calc_avg_rgb_for_images(images_directory)
+    calc_avg_rgb_for_images(images_directory)
 
     tiles_pixels = main_image_to_tiles("fotka04.png", 8)
 
