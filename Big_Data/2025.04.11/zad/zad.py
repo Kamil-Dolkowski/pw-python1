@@ -25,10 +25,11 @@ def get_all_files_in_directory(directory):
 
     return files
 
-def average_RGB_from_image(img_name, img_directory):
+def average_rgb_from_image(img_name, img_directory):
     img_path = os.path.join(img_directory, img_name)
 
     img = Image.open(img_path)
+    img = img.convert("RGB")
     pixels = img.load()
     cols, rows = img.size
 
@@ -53,6 +54,7 @@ def average_RGB_from_image(img_name, img_directory):
         file.write(f"{img_name};{r};{g};{b}\n")
 
 def calc_avg_rgb_for_images(images_directory):
+    print("Liczenie średnich RGB:", end=" ")
     begin = time.time()
     with open("rgb.txt", "w") as file:
         file.write("")
@@ -61,7 +63,7 @@ def calc_avg_rgb_for_images(images_directory):
     workers = []
 
     for image in images:
-        worker = multiprocessing.Process(target=average_RGB_from_image, args=(image, images_directory))
+        worker = multiprocessing.Process(target=average_rgb_from_image, args=(image, images_directory))
         workers.append(worker)
         worker.start()
 
@@ -69,10 +71,11 @@ def calc_avg_rgb_for_images(images_directory):
         worker.join()
 
     end = time.time()
-    print(f"Liczenie średnich RGB: 100% [{(end-begin):.1f}s]")
+    print(f"100% [{(end-begin):.1f}s]")
 
 def main_image_to_tiles(img_name, tSize):
     img = Image.open(img_name)
+    img = img.convert("RGB")
     pixels = img.load()
     cols, rows = img.size
 
@@ -109,22 +112,22 @@ def main_image_to_tiles(img_name, tSize):
             tiles_pixels[i][j] = (r,g,b)
     return tiles_pixels
 
-def join_images(tiles_pixels, images_directory, tSize = 150):
+def join_images(tiles_pixels, images_directory, final_image, tSize = 150):
     workers = []
     pipes = []
-    rows,cols = len(tiles_pixels[0]) * tSize, len(tiles_pixels[0]) * tSize
+    rows, cols = len(tiles_pixels) * tSize, len(tiles_pixels[0]) * tSize
 
     new_image = Image.new("RGB", (rows, cols))
 
     print("Szukanie odpowiednich zdjęć:", end=" ")
     begin = time.time()
 
-    for c in range(int(cols/tSize)):
+    for r in range(int(rows/tSize)):
         pipeParent, pipeChild = Pipe()
 
         worker = multiprocessing.Process(
-            target = find_suitable_images_for_pixels_in_column, 
-            args = (tiles_pixels[c], images_directory, c, pipeChild)
+            target = find_suitable_images_for_pixels_in_rows, 
+            args = (tiles_pixels[r], images_directory, r, pipeChild)
         )
         workers.append(worker)
         pipes.append(pipeParent)
@@ -141,35 +144,37 @@ def join_images(tiles_pixels, images_directory, tSize = 150):
     print("Łączenie zdjęć:", end=" ")
     begin = time.time()
 
-    number_of_cols = len(pipes)
-    col_number = 1
+    number_of_rows = len(pipes)
+    row_number = 1
 
     for p in pipes:
-        images_paths,c = p.recv()
+        images_paths,r = p.recv()
 
-        r = 0
+        c = 0
         for img_path in images_paths:
             
             image = Image.open(img_path)
 
-            new_image.paste(image,(c*tSize,r*tSize))
+            new_image.paste(image,(r*tSize,c*tSize))
 
-            r+=1
-        sys.stdout.write(f'\rŁączenie zdjęć: {int(100 * col_number/number_of_cols)}%')
+            c+=1
+        sys.stdout.write(f'\rŁączenie zdjęć: {int(100 * row_number/number_of_rows)}%')
         sys.stdout.flush()
-        col_number += 1
+        row_number += 1
     
     end = time.time()
     print(f" [{(end-begin):.1f}s]")
 
+    
+    sys.stdout.write(f"Zapisywanie zdjęcia '{final_image}': ")
+    sys.stdout.flush()
 
-    print("Zapisywanie zdjęcia 'final_img.png':", end=" ")
     begin = time.time()
-    new_image.save(f"final_img.png", format="PNG", compress_level=0)
+    new_image.save(final_image, format="PNG", compress_level=1)
     end = time.time()
     print(f"100% [{(end-begin):.1f}s]")
 
-def find_suitable_images_for_pixels_in_column(pixels, images_directory, c, pipe):
+def find_suitable_images_for_pixels_in_rows(pixels, images_directory, row, pipe):
     images = []
     for pixel in pixels:
         r,g,b = pixel
@@ -188,19 +193,24 @@ def find_suitable_images_for_pixels_in_column(pixels, images_directory, c, pipe)
                     d_min = d
         images.append(img_path)
 
-    pipe.send((images,c))
+    pipe.send((images,row))
 
 
 
 def main():
-    images_directory = "seg_pred"
+    images_directory = "Images"
+    image_to_mozaic = "fotka04.png"
+    final_image = "final_img.png"
+
+    tSize_mozaic = 1
+    tSize_images = 150
 
     begin = time.time()
     calc_avg_rgb_for_images(images_directory)
 
-    tiles_pixels = main_image_to_tiles("fotka04.png", 8)
+    tiles_pixels = main_image_to_tiles(image_to_mozaic, tSize_mozaic)
 
-    join_images(tiles_pixels, images_directory, tSize = 150)
+    join_images(tiles_pixels, images_directory, final_image, tSize_images)
     end = time.time()
     print(f"\nŁączny czas operacji: {(end - begin)} s")
 
