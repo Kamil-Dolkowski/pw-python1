@@ -5,7 +5,7 @@ Sub Przycisk1_Kliknięcie()
 	For m = 0 To NN
 		sumaCos = 0
 		sumaSin = 0
-		For k = 0To 2 * NN + 1
+		For k = 0 To 2 * NN + 1
 			sumaCos = sumaCos + Range("b" & 5 + k).Value * Cos(2 * WorksheetFunction.Pi() * m * k / (2 * NN + 2))
 			sumaSin = sumaSin + Range("b" & 5 + k).Value * Sin(2 * WorksheetFunction.Pi() * m * k / (2 * NN + 2))
 		Next
