@@ -14,24 +14,42 @@ import time
 import sys
 
 
-def get_all_files_in_directory(directory):
-    files = []
+def get_all_images_in_directory(directory):
+    image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp'}
+    images = []
 
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
 
-        if not os.path.isdir(file_path):
-            files.append(file)
+        if not os.path.isdir(file_path) and any(file.lower().endswith(ext) for ext in image_extensions):
+            images.append(file)
 
-    return files
+    return images
 
-def average_rgb_from_image(img_name, img_directory):
+def average_rgb_from_image(img_name, img_directory, tSize):
     img_path = os.path.join(img_directory, img_name)
 
     img = Image.open(img_path)
     img = img.convert("RGB")
     pixels = img.load()
     cols, rows = img.size
+
+    left = (cols // 2) - (tSize // 2)
+    top = (rows // 2) - (tSize // 2)
+    right = left + tSize
+    bottom = top + tSize
+
+    if (left < 0 or top < 0 or right > cols or bottom > rows):
+        sys.stdout.write(f"\r(!) Ostrzeżenie: Zdjęcie '{img_name}' ma za mały rozmiar.")
+        sys.stdout.write(f"\nLiczenie średnich RGB: ")
+        sys.stdout.flush()
+
+    # print(f"{left}, {top}, {right}, {bottom}")
+
+    cropped_img = img.crop((left, top, right, bottom))
+
+    pixels = cropped_img.load()
+    cols, rows = cropped_img.size
 
     s = cols * rows
 
@@ -53,17 +71,17 @@ def average_rgb_from_image(img_name, img_directory):
     with open("rgb.txt", "a") as file:
         file.write(f"{img_name};{r};{g};{b}\n")
 
-def calc_avg_rgb_for_images(images_directory):
+def calc_avg_rgb_for_images(images_directory, tSize):
     print("Liczenie średnich RGB:", end=" ")
     begin = time.time()
     with open("rgb.txt", "w") as file:
         file.write("")
 
-    images = get_all_files_in_directory(images_directory)
+    images = get_all_images_in_directory(images_directory)
     workers = []
 
     for image in images:
-        worker = multiprocessing.Process(target=average_rgb_from_image, args=(image, images_directory))
+        worker = multiprocessing.Process(target=average_rgb_from_image, args=(image, images_directory, tSize))
         workers.append(worker)
         worker.start()
 
@@ -155,7 +173,17 @@ def join_images(tiles_pixels, images_directory, final_image, tSize = 150):
             
             image = Image.open(img_path)
 
-            new_image.paste(image,(r*tSize,c*tSize))
+            # image = image.convert("RGB")
+            cols, rows = image.size
+
+            left = (cols // 2) - (tSize // 2)
+            top = (rows // 2) - (tSize // 2)
+            right = left + tSize
+            bottom = top + tSize
+
+            cropped_img = image.crop((left, top, right, bottom))
+
+            new_image.paste(cropped_img,(r*tSize,c*tSize))
 
             c+=1
         sys.stdout.write(f'\rŁączenie zdjęć: {int(100 * row_number/number_of_rows)}%')
@@ -198,19 +226,20 @@ def find_suitable_images_for_pixels_in_rows(pixels, images_directory, row, pipe)
 
 
 def main():
-    images_directory = "Images"
+    images_directory = "seg_pred"
     image_to_mozaic = "fotka04.png"
     final_image = "final_img.png"
 
-    tSize_mozaic = 1
-    tSize_images = 150
+    tSize_mozaic = 4
+    tSize_images = 16
 
     begin = time.time()
-    calc_avg_rgb_for_images(images_directory)
+    calc_avg_rgb_for_images(images_directory, tSize_images)
 
     tiles_pixels = main_image_to_tiles(image_to_mozaic, tSize_mozaic)
 
     join_images(tiles_pixels, images_directory, final_image, tSize_images)
+
     end = time.time()
     print(f"\nŁączny czas operacji: {(end - begin)} s")
 
