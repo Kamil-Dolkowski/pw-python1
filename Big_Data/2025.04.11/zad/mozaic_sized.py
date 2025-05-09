@@ -130,7 +130,7 @@ def main_image_to_tiles(img_name, tSize):
             tiles_pixels[i][j] = (r,g,b)
     return tiles_pixels
 
-def join_images(tiles_pixels, images_directory, final_image, tSize = 150):
+def join_images(tiles_pixels, images_directory, final_image, tSize):
     workers = []
     pipes = []
     rows, cols = len(tiles_pixels) * tSize, len(tiles_pixels[0]) * tSize
@@ -231,7 +231,7 @@ def main():
     final_image = "final_img.png"
 
     tSize_mozaic = 4
-    tSize_images = 16
+    tSize_images = 75
 
     begin = time.time()
     calc_avg_rgb_for_images(images_directory, tSize_images)
