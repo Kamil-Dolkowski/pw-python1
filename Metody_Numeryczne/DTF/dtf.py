@@ -16,7 +16,11 @@
 
 import math
 
-y = [1,2,3,4,5,6]
+y = []
+
+for i in range(10):
+    y.append(math.sin(i*math.pi/4))
+
 suma_cos = []
 suma_sin = []
 
@@ -25,10 +29,13 @@ def dtf(n):
         sumaCos = 0
         sumaSin = 0
         for k in range(2*n+1):
-            sumaCos = sumaCos + y[k] * math.cos(2 * math.pi() * m * k / (2 * n + 2))
-            sumaSin = sumaSin + y[k] * math.sin(2 * math.pi() * m * k / (2 * n + 2))
-    suma_cos[m] = sumaCos / (2 * n + 2)
-    suma_sin[m] = sumaSin / (2 * n + 2)
+            sumaCos = sumaCos + y[k] * math.cos(2 * math.pi * m * k / (2 * n + 2))
+            sumaSin = sumaSin + y[k] * math.sin(2 * math.pi * m * k / (2 * n + 2))
+    suma_cos.append(sumaCos / (2 * n + 2))
+    suma_sin.append(sumaSin / (2 * n + 2))
 
-dtf(len(y))
+dtf(2)
+
+print(y)
 print(suma_cos)
+print(suma_sin)
