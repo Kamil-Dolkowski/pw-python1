@@ -230,8 +230,8 @@ def main():
     image_to_mozaic = "fotka04.png"
     final_image = "final_img.png"
 
-    tSize_mozaic = 4
-    tSize_images = 75
+    tSize_mozaic = 8
+    tSize_images = 150
 
     begin = time.time()
     calc_avg_rgb_for_images(images_directory, tSize_images)
