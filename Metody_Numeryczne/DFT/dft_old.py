@@ -39,3 +39,36 @@ dtf(2)
 print(y)
 print(suma_cos)
 print(suma_sin)
+
+
+
+
+#======================================
+
+
+# ∑n=0N−1xn[cos(2πkn/N)−i⋅sin(2πkn/N)]
+import math
+
+MIN_VALUE = 1e-10
+
+x = [math.sin(i*math.pi/4) for i in range(16)]
+dft = []
+
+n = len(x)
+
+for k in range(n):
+    real = 0
+    imag = 0
+    for i in range(n):
+        real += x[i] * math.cos(2*math.pi*k*i/n)
+        imag += x[i] * (-1*math.sin(2*math.pi*k*i/n))
+    
+    if abs(real) < MIN_VALUE:
+        real = 0
+    if abs(imag) < MIN_VALUE:
+        imag = 0
+        
+    dft.append((real, imag))
+        
+for i in range(len(dft)):
+    print(f"{i}: {dft[i]}")
