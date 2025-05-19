@@ -159,14 +159,14 @@ def main():
 
     option = input("\nWypisać wzór interpolacyjny Newtona? [T/N]: ")
     if option in ["T", "t"]:
-        option = input("\nKtórą postać wzoru wypisać? [O/I]\n(ogólną/iloczynową): ")
+        option = input("\nKtórą postać wzoru wypisać? [O/SI]\n(ogólną/suma iloczynów): ")
         if option in ["O", "o"]:
             print("\nWzór interpolacyjny Newtona (postać ogólna):")
             wzor = interpolacja_wzor_postac_ogolna(df_nodes, a)
             print(f"F(x) = {wzor}")
             
         elif option in ["I", "i"]:
-            print("\nWzór interpolacyjny Newtona (postać iloczynowa):")
+            print("\nWzór interpolacyjny Newtona (postać suma iloczynów):")
             wzor = interpolacja_wzor(df_nodes, a)
             print(f"F(x) = {wzor}")
 
