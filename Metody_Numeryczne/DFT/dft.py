@@ -95,13 +95,13 @@ def main():
     dft_values = dft(y)
     dft_mod_values = modulus_of_dft(dft_values)
 
-    print("\n======= DFT =======")
-    for i in range(len(dft_values)):
-        print(f"{i}: {get_print_complex_number(dft_values[i])}")
+    # print("\n======= DFT =======")
+    # for i in range(len(dft_values)):
+    #     print(f"{i}: {get_print_complex_number(dft_values[i])}")
 
-    print("\n======= |DFT| =======")
-    for i in range(len(dft_mod_values)):
-        print(f"{i}: {dft_mod_values[i]}")
+    # print("\n======= |DFT| =======")
+    # for i in range(len(dft_mod_values)):
+    #     print(f"{i}: {dft_mod_values[i]}")
 
     plt.subplot(2,1,1)
     plt.plot(x,y)
