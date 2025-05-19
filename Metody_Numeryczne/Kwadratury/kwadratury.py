@@ -1,6 +1,6 @@
 import sympy as sp
 
-MAX_DEPTH = 1_000
+MAX_DEPTH = 5_000
 
 def rectangles_method(F, a, b, E):
     n = 1
