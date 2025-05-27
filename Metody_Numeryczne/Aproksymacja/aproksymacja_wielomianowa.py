@@ -15,7 +15,7 @@ def det(A):
         for i in range(n):
             # A_ij <- macierz A ze skreślonym i-tym wierszem i j-tą kolumną
             # dla uproszczenia: j = 0
-            A_ij = [row[1:] for j, row in enumerate(A) if j != i] # wiersze oprócz j=i oraz kolumny oprócz i=0 (row[1:])
+            A_ij = [row[1:] for i_, row in enumerate(A) if i_ != i] # wiersze oprócz wiersza i oraz kolumny oprócz j=0 (row[1:])
 
             det_result += (-1)**i * A[i][0] * det(A_ij)
 
@@ -28,14 +28,14 @@ def calc_a(df, m): # df - zbiór danych, m - stopień wielomianu
     A = [[0]*(m+1) for _ in range(m+1)]
     b = [0 for _ in range(m+1)]
 
-    for j in range(2*m +1):
-        xsum[j] = sum(df['x']**j)
+    for i in range(2*m +1):
+        xsum[i] = sum(df['x']**i)
 
-    for j in range(m+1):
-        for i in range(m+1):
+    for i in range(m+1):
+        for j in range(m+1):
             A[i][j] = xsum[i+j]
 
-        b[j] = sum(df['x']**j * df['y'])
+        b[i] = sum(df['x']**i * df['y'])
 
     # A * a = b
     # Wyznaczenie macierzy odwrotnej do macierzy A
@@ -43,19 +43,35 @@ def calc_a(df, m): # df - zbiór danych, m - stopień wielomianu
 
     detA = det(A)
 
-    for j in range(m+1):
-        for i in range(m+1):
-            A_1[i][j] = ((-1)**((i)+(j)) * A[m-i-1][m-j-1]) / detA
+    for i in range(m+1):
+        for j in range(m+1):
+            T = [row[:j] + row[j+1:] for i_, row in enumerate(A) if i_ != i] # macierz A bez wiersza i oraz bez kolumny j
+
+            A_1[i][j] = ((-1)**(i+j) * det(T)) / detA
 
     # A_1 * b = a
     # Wyznaczenie macierzy współczynników funkcji
     a = [0 for _ in range(m+1)]
 
-    print(A_1)
+    # print(f"det(A) = {detA}")
 
-    for j in range(m):
-        for i in range(m):
-            a[j] += A_1[i][j] * b[j]
+    # print("A:")
+    # for row in A:
+    #     print(row)
+
+    # print("A_1:")
+    # for row in A_1:
+    #     print(row)
+
+    for i in range(m+1):
+        for j in range(m+1):
+            a[i] += A_1[i][j] * b[j]
+
+    # print(f"A_1 = {A_1}")
+    # print(f"b = {b}")
+    # print(f"a = {a}")
+
+    a.reverse()
 
     return a
 
@@ -66,8 +82,7 @@ def main():
     print("x;y")
     print("<int/float>;<int/float>")
 
-    # file = input("\nPodaj nazwę pliku z danymi: ")
-    file = "dane1.csv"
+    file = input("\nPodaj nazwę pliku z danymi: ")
 
     try:
         df = pd.read_csv(file, delimiter=';', dtype={'x': float, 'y': float})
@@ -85,11 +100,21 @@ def main():
     # print("\nDane z pliku:")
     # print(df)
 
+    plt.plot(df['x'], df['y'], 'o', label="w")
+    plt.legend(loc='best')
+    plt.show()
+
+    try:
+        m = int(input("\nPodaj stopień wielomianu aproksymacji: "))
+        if (m <= 0):
+            raise ValueError("Value < 0")
+    except ValueError:
+        print("\nBłąd: Błędna wartość")
+        return
+
     print("\n==== ROZWIĄZANIE ====")
 
-    a = calc_a(df, 2)
-
-    # a = [0.214286, 0.863095, 0.041667]
+    a = calc_a(df, m)
 
     print("\nWzór funkcji aproksymującej:")
     formula = "y = "
@@ -98,9 +123,9 @@ def main():
             if a[i] >= 0:
                 formula += " + "
             else:
-                formula += " "
+                formula += " - "
 
-        formula += f"{a[i]}"
+        formula += f"{abs(a[i])}"
 
         if i != len(a)-1:
             formula += f" * x^{len(a)-1-i}" 
