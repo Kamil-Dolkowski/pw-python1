@@ -24,18 +24,24 @@ while True:
         else:
             print("- nickname already exists")
 
-    if data[0:1] == b"\1":
+    elif data[0:1] == b"\1":
         print("- get message package")
         message = data[1:]
 
-        print(users)
-
         if addr in users.keys():
             for user in users.keys():
-                sock.sendto(users[user] + b": " + message, user)
+                sock.sendto(users[addr] + b": " + message, user)
             
             print("- send to all users")
 
+    elif addr in users.keys():
+        nickname = users[addr]
+        print(f"- disconnect user with nickname {nickname}")
 
+        del users[addr]
+        print(f"- delete user with nickname {nickname}")
 
-    # print(f"received message: {data}")
+    else:
+        print("- ignore message")
+
+# sock.close()
