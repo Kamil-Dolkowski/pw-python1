@@ -53,23 +53,9 @@ def calc_a(df, m): # df - zbiór danych, m - stopień wielomianu
     # Wyznaczenie macierzy współczynników funkcji
     a = [0 for _ in range(m+1)]
 
-    # print(f"det(A) = {detA}")
-
-    # print("A:")
-    # for row in A:
-    #     print(row)
-
-    # print("A_1:")
-    # for row in A_1:
-    #     print(row)
-
     for i in range(m+1):
         for j in range(m+1):
             a[i] += A_1[i][j] * b[j]
-
-    # print(f"A_1 = {A_1}")
-    # print(f"b = {b}")
-    # print(f"a = {a}")
 
     a.reverse()
 
