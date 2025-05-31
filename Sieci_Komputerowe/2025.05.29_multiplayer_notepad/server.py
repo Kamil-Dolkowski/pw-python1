@@ -9,39 +9,50 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 sock.bind((UDP_IP, UDP_PORT))
 
-while True:
-    data, addr = sock.recvfrom(1024)
+print("Server turned on")
 
-    print("\n===== New message =====")
+try:
+    while True:
+        data, addr = sock.recvfrom(1024)
 
-    if data[0:1] == b"\0":
-        print("- get nickname package")
-        nickname = data[1:]
+        print("\n===== New message =====")
 
-        if nickname not in users.values():
-            users[addr] = nickname
-            print("- add new nickname")
+        if data[0:1] == b"\0":
+            print("- get nickname package")
+            nickname = data[1:]
+
+            if nickname not in users.values():
+                users[addr] = nickname
+                print(f"- add new nickname: {nickname}")
+            else:
+                print("- nickname already exists")
+                sock.sendto(b"Error: Nickname already exists", addr)
+                print("- send error message to client")
+
+        elif data[0:1] == b"\1":
+            print("- get message package")
+            message = data[1:]
+
+            if addr in users.keys():
+                for user in users.keys():
+                    sock.sendto(users[addr] + b": " + message, user)
+                
+                print("- send to all users")
+            else:
+                print("- ignore message")
+
+        elif addr in users.keys():
+            nickname = users[addr]
+            print(f"- disconnect user with nickname {nickname}")
+
+            del users[addr]
+            print(f"- delete user with nickname {nickname}")
+
         else:
-            print("- nickname already exists")
+            print("- ignore message")
 
-    elif data[0:1] == b"\1":
-        print("- get message package")
-        message = data[1:]
+    # sock.close()
 
-        if addr in users.keys():
-            for user in users.keys():
-                sock.sendto(users[addr] + b": " + message, user)
-            
-            print("- send to all users")
-
-    elif addr in users.keys():
-        nickname = users[addr]
-        print(f"- disconnect user with nickname {nickname}")
-
-        del users[addr]
-        print(f"- delete user with nickname {nickname}")
-
-    else:
-        print("- ignore message")
-
-# sock.close()
+except KeyboardInterrupt:
+    sock.close()
+    print("\nServer turned off")
