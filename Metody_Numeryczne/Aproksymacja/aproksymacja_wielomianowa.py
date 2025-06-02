@@ -2,6 +2,8 @@ import pandas as pd
 import sympy as sp
 import matplotlib.pyplot as plt
 
+PRECISION = 0.01
+
 # Wyznacznik macierzy (wersja rekurencyjna)
 def det(A):
     n = len(A)
@@ -57,6 +59,7 @@ def calc_a(df, m): # df - zbiór danych, m - stopień wielomianu
         for j in range(m+1):
             a[i] += A_1[i][j] * b[j]
 
+    # Odwrócenie, by współczynniki były w kolejności od najwyższej potęgi
     a.reverse()
 
     return a
@@ -125,10 +128,22 @@ def main():
     expr = sp.sympify(formula_cleaned)
     F = sp.lambdify(x, expr)
 
-    Y = df['x'].apply(lambda x: F(x))
+    # Wykres funkcji aproksymującej
+    Y = pd.DataFrame()
+    x_values = []
+    x_i = df['x'].min()
+
+    while x_i < df['x'].max():
+        x_values.append(x_i)
+        x_i += PRECISION
+
+    x_values.append(df['x'].max())
+
+    Y['x'] = x_values
+    Y['y'] = Y['x'].apply(lambda x: F(x))
     
-    plt.plot(df['x'], Y, '-', label="Y")
     plt.plot(df['x'], df['y'], 'o', label="w")
+    plt.plot(Y['x'], Y['y'], '-', label="Y")
     plt.legend(loc='best')
     plt.show()
 

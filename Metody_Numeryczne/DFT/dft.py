@@ -79,7 +79,7 @@ def main():
             next(file)
             for line in file:
                 x_, y_ = line.strip().split(";")
-                if x_ == None or y_ == None:
+                if x_ == "" or y_ == "":
                     raise ValueError
                 x.append(float(x_.replace(",", "."))) # zamiana ',' na '.' [1,5 -> 1.5]
                 y.append(float(y_.replace(",", ".")))
@@ -103,6 +103,9 @@ def main():
     # for i in range(len(dft_mod_values)):
     #     print(f"{i}: {dft_mod_values[i]}")
 
+    n = len(dft_mod_values)
+    freq = [i for i in range(n//2)]
+
     plt.subplot(2,1,1)
     plt.plot(x,y)
     plt.title("sygnał zaszumiony")
@@ -110,7 +113,7 @@ def main():
     plt.ylabel("y")
 
     plt.subplot(2,1,2)
-    plt.bar(x[: len(x) // 2], dft_mod_values[: len(dft_mod_values) // 2]) # połowa 'x' i 'dft_mod_values'
+    plt.bar(freq, dft_mod_values[: len(dft_mod_values) // 2]) # połowa 'dft_mod_values'
     plt.title("|DFT|")
     plt.xlabel("x")
     plt.ylabel("|DFT|")
@@ -121,7 +124,7 @@ def main():
     try:
         noise_max_value = float(input("Podaj próg usunięcia szumów: "))
     except:
-        ("\nBłąd: Niepoprawna wartość.")
+        print("\nBłąd: Niepoprawna wartość.")
         return
 
     dft_after_delete_noise = []
@@ -141,7 +144,7 @@ def main():
     plt.ylabel("y")
 
     plt.subplot(3,1,2)
-    plt.bar(x[: len(x) // 2], dft_mod_values[: len(dft_mod_values) // 2]) # połowa 'x' i 'dft_mod_values'
+    plt.bar(freq, dft_mod_values[: len(dft_mod_values) // 2]) # połowa 'dft_mod_values'
     plt.title("|DFT|")
     plt.xlabel("x")
     plt.ylabel("|DFT|")
@@ -153,6 +156,21 @@ def main():
     plt.ylabel("y")
     plt.tight_layout()
     plt.show()
+
+    choice = input("\nChcesz zapisać wyniki do pliku? [t/n]: ")
+    if choice in ["T", "t"]:
+        filename = input("Podaj nazwę pliku wynikowego: ")
+
+        with open(filename, "w") as file:
+            file.write("x;y\n")
+
+            for i in range(len(y_from_inverse)):
+                file.write(f"{x[i]};{y_from_inverse[i]}")
+
+                if i != len(y_from_inverse) - 1:
+                    file.write("\n")
+
+        print(f"\nZapisano wyniki do pliku '{filename}'")
 
 if __name__ == "__main__":
     main()

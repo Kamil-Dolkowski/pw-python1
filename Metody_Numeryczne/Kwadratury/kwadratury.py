@@ -132,7 +132,7 @@ def main():
 
     if method == "p":
         result, n = rectangles_method(F, a, b, E)
-        print_result_info("prostokąty", result, n)
+        print_result_info("prostokąty (lewe)", result, n)
 
     elif method == "t":
         result, n = trapeziums_method(F, a, b, E)
@@ -144,7 +144,7 @@ def main():
         
     elif method == "w":
         result, n = rectangles_method(F, a, b, E)
-        print_result_info("prostokąty", result, n)
+        print_result_info("prostokąty (lewe)", result, n)
 
         result, n = trapeziums_method(F, a, b, E)
         print_result_info("trapezy", result, n)

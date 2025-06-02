@@ -9,7 +9,7 @@ MAX_NUMBER_OF_POINTS = 5
 RESULT_FILE = "interpolacja_wynik.csv"
 PRECISION = 0.1
 
-# Wyznaczenie tablicy ilorazów różnicowych
+# === Wyznaczanie tablicy ilorazów różnicowych
 def ilorazy_roznicowe(df_nodes):
     df_nodes.reset_index(inplace=True, drop=True) # aby indeksy df_nodes zaczynały się od 0
     n = len(df_nodes)
@@ -20,7 +20,8 @@ def ilorazy_roznicowe(df_nodes):
             a[j] = (a[j] - a[j-1]) / (df_nodes['x'][j] - df_nodes['x'][j-1-i])
     return a
 
-# Funkcja interpolacyjna (wzór interpolacyjny Newtona)
+# === Funkcja interpolacyjna (wzór interpolacyjny Newtona) [obliczenia wartości]
+# Funkcja nieużywana (starsza wersja) (wolniejsza)
 def interpolacja(x, df_nodes, a) -> float:
     y = a[0]
     length = len(a)
@@ -31,15 +32,18 @@ def interpolacja(x, df_nodes, a) -> float:
         y += element
     return y
 
+# Funkcja używana (szybsza)
 def interpolacja_postac_ogolna(x, F) -> float:
     x_symbol = symbols('x')
     return F.subs(x_symbol, x)
 
-# Wzory
-# postać ogólna
+# === Wzory
+# postać ogólna (wykorzystywana do obliczeń - mniejsza ilość operacji)
 def interpolacja_wzor_postac_ogolna(df_nodes, a) -> str:
     df_nodes.reset_index(inplace=True, drop=True)
     F_str = interpolacja_wzor(df_nodes, a)
+    
+    # Zamiana funkcji z postaci sumy iloczynów na postać ogólną (zmniejszenie ilości operacji)
     F = sympify(F_str)
     expanded_F = expand(F)
     return expanded_F
@@ -61,6 +65,7 @@ def interpolacja_wzor(df_nodes, a) -> str:
                 wzor +=" + "
     return wzor
 
+# Funkcja dzieli cały przedział danych na mniejsze przedziały, w których jest dokonywana interpolacja
 def interpolacja_dla_całego_przedziału(df_nodes, df_all):
     x_values = []
     df_interpolate = pd.DataFrame({'x': x_values})
@@ -206,7 +211,6 @@ def main():
         except ValueError:
             # Konwersja zapisanej w pliku liczby float z przecinkiem na kropkę
             try:
-                print("========================")
                 df_nodes = pd.read_csv(file_nodes, delimiter=';', dtype={'x': float, 'y': float}, decimal=",")
                 df_to_calc = pd.read_csv(file_to_calc, delimiter=';', dtype={'x': float, 'y': float}, decimal=",")
             except:
@@ -251,7 +255,15 @@ def main():
     # ====== WYZNACZANIE DOWOLNEJ WARTOŚCI ======
     option = input("\nChcesz za pomocą obliczonej interpolacji wyznaczyć wartość dla danego X? [t/n]: ")
     if option in ["T", "t"]:
-        x = float(input("Podaj x: "))
+        try:
+            x = float(input("Podaj x: "))
+        except:
+            print("\nBłąd: Podano niepoprawną wartość.")
+            return
+        
+        if x > df_all['x'].max() or x < df_all['x'].min():
+            print("\nUwaga! Podana wartość jest spoza zakresu interpolacji!")
+
         y = wyznacz_wartosc(x, df_nodes)
 
         print(f"\nF({x}) = {y}")

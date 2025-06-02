@@ -46,6 +46,7 @@ weights = [
 ]
 
 
+# Suma iloczynów
 def sum_of_products(input: list[int], weights: list[int]) -> int :
     sum = 0
 
