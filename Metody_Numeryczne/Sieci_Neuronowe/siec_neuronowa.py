@@ -1,49 +1,51 @@
-classes = [
-    "Informatyka", 
-    "Medycyna", 
-    "Prawo", 
-    "Lingwistyka", 
-    "Psychologia", 
-    "Matematyka", 
-    "Budownictwo", 
-    "Mechanika", 
-    "Ekonomia", 
-    "Architektura",
-    "Muzyka"
-]
+import pandas as pd
 
-properties = [
-    "Umiejętności matematyczne",
-    "Logiczne myślenie",
-    "Zdolności językowe",
-    "Kreatywność",
-    "Umiejętność słuchania innych",
-    "Empatia",
-    "Dobra organizacja",
-    "Dokładność",
-    "Cierpliwość",
-    "Odporność na stres",
-    "Odpowiedzialność",
-    "Zdolności manualne",
-    "Wrażliwość artystyczna",
-    "Czytanie ze zrozumieniem"
-]
+# classes = [
+#     "Informatyka", 
+#     "Medycyna", 
+#     "Prawo", 
+#     "Lingwistyka", 
+#     "Psychologia", 
+#     "Matematyka", 
+#     "Budownictwo", 
+#     "Mechanika", 
+#     "Ekonomia", 
+#     "Architektura",
+#     "Muzyka"
+# ]
+
+# properties = [
+#     "Umiejętności matematyczne",
+#     "Logiczne myślenie",
+#     "Zdolności językowe",
+#     "Kreatywność",
+#     "Umiejętność słuchania innych",
+#     "Empatia",
+#     "Dobra organizacja",
+#     "Dokładność",
+#     "Cierpliwość",
+#     "Odporność na stres",
+#     "Odpowiedzialność",
+#     "Zdolności manualne",
+#     "Wrażliwość artystyczna",
+#     "Czytanie ze zrozumieniem"
+# ]
 
 # Zakres wag: [0-5]
 
-weights = [
-    [4,5,4,5,1,0,5,5,5,5,3,0,0,4],
-    [0,4,2,0,4,5,3,3,5,5,5,3,0,5],
-    [1,5,3,2,3,1,4,5,4,3,5,0,0,5],
-    [0,2,5,3,4,3,2,1,1,1,2,0,1,4],
-    [2,5,3,3,5,5,2,2,5,2,5,0,0,3],
-    [5,5,0,5,1,0,3,5,3,2,3,0,0,4],
-    [5,4,1,4,1,0,5,5,4,3,5,0,0,3],
-    [5,5,0,5,1,0,2,5,4,2,4,4,0,4],
-    [5,5,3,3,1,0,5,5,4,2,4,0,0,5],
-    [3,2,0,5,1,0,2,3,1,1,2,5,5,1],
-    [1,2,1,5,3,4,5,4,5,5,2,4,5,3]
-]
+# weights = [
+#     [4,5,4,5,1,0,5,5,5,5,3,0,0,4],
+#     [0,4,2,0,4,5,3,3,5,5,5,3,0,5],
+#     [1,5,3,2,3,1,4,5,4,3,5,0,0,5],
+#     [0,2,5,3,4,3,2,1,1,1,2,0,1,4],
+#     [2,5,3,3,5,5,2,2,5,2,5,0,0,3],
+#     [5,5,0,5,1,0,3,5,3,2,3,0,0,4],
+#     [5,4,1,4,1,0,5,5,4,3,5,0,0,3],
+#     [5,5,0,5,1,0,2,5,4,2,4,4,0,4],
+#     [5,5,3,3,1,0,5,5,4,2,4,0,0,5],
+#     [3,2,0,5,1,0,2,3,1,1,2,5,5,1],
+#     [1,2,1,5,3,4,5,4,5,5,2,4,5,3]
+# ]
 
 
 # Suma iloczynów
@@ -61,6 +63,64 @@ def main():
     output = []
     final_answers = []
 
+    print("===== SZTUCZNA SIEĆ NEURONOWA =====")
+
+    print("\nFORMAT PLIKU: (.csv/.txt)")
+    print("Kierunek;Cecha1;Cecha2;..;CechaN")
+    print("<string>;<int>;<int>;..;<int>\n")
+
+
+    file = input("Podaj nazwę pliku z danymi: ")
+
+    try:
+        df = pd.read_csv(file, delimiter=';')
+
+    except FileNotFoundError:
+        print(f"\nBłąd: Plik o nazwie '{file}' nie istnieje")
+        return
+    
+    except Exception:
+        print("\nBłąd: Niepoprawny format pliku")
+        return
+
+
+    # == Walidacja pliku
+    # Czy plik ma co najmniej 2 kolumny (Kierunek, Cecha, Cecha, ..., Cecha)
+    if df.columns.size < 2:
+        print("\nBłąd: Muszą być co najmniej 2 kolumny. Pierwsza to 'Kierunek', a kolejne to nazwy cech")
+        return
+    
+    # Czy pierwsza kolumna to 'Kierunek'
+    if (df.columns[0] != 'Kierunek'):
+        print("\nBłąd: Kolumna nr 1 nie nazywa się 'Kierunek'")
+        return
+    
+    # Czy wiersze są pełne, czy nie brakuje danych w wierszach
+    if df.isnull().values.any():
+        print("\nBłąd: Brakujące dane w wierszu/wierszach")
+        return
+
+    # Czy wagi są typu int
+    try:
+        df.iloc[:, 1:].values.astype(int)
+    except:
+        print("\nBłąd: Dane oprócz kolumny 'Kierunek' muszą być liczbami całkowitymi")
+        return
+
+
+    # == Inicjalizacja properties, classes i weights
+    properties = df.columns.tolist()
+    properties = properties[1:] # Wyrzucenie nagłówka 'Kierunek' (pierwszy nagłówek) z properties
+
+    classes = df['Kierunek'].to_list()
+
+    weights = []
+
+    for i in df.index.tolist():
+        weights.append(df.iloc[i][1:].to_list())
+
+
+    print("\n================================= TEST ====================================")
     print("Do poniższych cech wpisz oceny od 0 do 5, jak bardzo się do Ciebie odnoszą.\n")
 
     try:
