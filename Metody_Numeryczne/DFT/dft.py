@@ -145,6 +145,7 @@ def main():
 
     plt.subplot(3,1,2)
     plt.bar(freq, dft_mod_values[: len(dft_mod_values) // 2]) # połowa 'dft_mod_values'
+    plt.axhline(y=noise_max_value, color="red", linestyle="--", label="próg")
     plt.title("|DFT|")
     plt.xlabel("x")
     plt.ylabel("|DFT|")

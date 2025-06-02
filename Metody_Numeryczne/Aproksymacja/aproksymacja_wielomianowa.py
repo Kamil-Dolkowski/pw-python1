@@ -142,8 +142,8 @@ def main():
     Y['x'] = x_values
     Y['y'] = Y['x'].apply(lambda x: F(x))
     
-    plt.plot(df['x'], df['y'], 'o', label="w")
     plt.plot(Y['x'], Y['y'], '-', label="Y")
+    plt.plot(df['x'], df['y'], 'o', label="w")
     plt.legend(loc='best')
     plt.show()
 

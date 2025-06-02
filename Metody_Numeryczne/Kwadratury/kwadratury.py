@@ -123,7 +123,7 @@ def main():
         print("\nBłąd: 'E' nie może być mniejsze od 0")
         return
 
-    print("\nPodaj metodę (p/t):")
+    print("\nPodaj metodę (p/t/s/w):")
     print("p - prostokąty")
     print("t - trapezy")
     print("s - parabole (metoda Simpsona)")

@@ -25,7 +25,7 @@ def main():
     file = input("\nPodaj nazwę pliku z danymi: ")
 
     try:
-        df = pd.read_csv(file, delimiter=';')
+        df = pd.read_csv(file, delimiter=';', dtype={'x': float, 'y': float}, decimal=",")
     except FileNotFoundError:
         print("\nBłąd: Nie znaleziono pliku o takiej nazwie.")
         return
