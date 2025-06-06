@@ -3,10 +3,12 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <string>
 
 int main() {
     std::string username = "user";
     std::string password = "password";
+    std::string data;
 
     int port = 5000;
 
@@ -30,7 +32,13 @@ int main() {
 
     char buffer[1024] = "reg;login;password";
 
+    data = "reg;login;password";
+
     send(fd, &buffer, sizeof(buffer)-1, 0);
+
+    data = "log;login;password";
+
+    send(fd, data.c_str(), sizeof(buffer)-1, 0);
 
     close(fd);
 

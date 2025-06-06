@@ -58,14 +58,33 @@ int main() {
         std::cout << operation << std::endl;
 
         if (operation == "reg") {
-            std::cout << "Rejestracja" << std::endl;
+            std::cout << "=== REJESTRACJA ===" << std::endl;
             
             if (users.find(username) == users.end()) {
                 users[username] = password;
-            }
+            } else {
+                std::cout << "Błąd: Dany użytkownik już istnieje" << std::endl;
+                data = "err";
+                send(fd_recv, data.c_str(), data.size(), 0);
+            }   
+        } else if (operation == "log") {
+            std::cout << "=== LOGOWANIE ===" << std::endl;
             
-            
+            if (users.find(username) != users.end()) {
+                if (users[username] == password) {
+                    std::cout << "Zalogowano pomyślnie" << std::endl;
+                } else {
+                    std::cout << "Błąd: Dany użytkownik nie istnieje" << std::endl;
+                    data = "err;invalid password";
+                    send(fd_recv, data.c_str(), data.size(), 0);
+                }
+            } else {
+                std::cout << "Błąd: Dany użytkownik nie istnieje" << std::endl;
+                data = "err;user already exists";
+                send(fd_recv, data.c_str(), data.size(), 0);
+            }   
         }
+        
 
         // "reg;login;password"
 
