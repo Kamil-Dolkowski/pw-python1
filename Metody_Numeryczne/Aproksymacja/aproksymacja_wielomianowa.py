@@ -91,6 +91,8 @@ def main():
 
     plt.plot(df['x'], df['y'], 'o', label="w")
     plt.legend(loc='best')
+    plt.xlabel('x')
+    plt.ylabel('y')
     plt.show()
 
     try:
@@ -145,6 +147,8 @@ def main():
     plt.plot(Y['x'], Y['y'], '-', label="Y")
     plt.plot(df['x'], df['y'], 'o', label="w")
     plt.legend(loc='best')
+    plt.xlabel('x')
+    plt.ylabel('y')
     plt.show()
 
 if __name__ == "__main__":
