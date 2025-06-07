@@ -283,6 +283,8 @@ def main():
         plt.plot(df_to_calc['x'], df_to_calc['F(x)'], 'o', label="y")
         plt.plot(x, y, 'o', markersize=10, label=f"F({x})")
         plt.legend(loc='best')
+        plt.xlabel("x")
+        plt.ylabel("F(x)")
         plt.show()
 
 
