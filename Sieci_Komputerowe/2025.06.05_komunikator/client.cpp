@@ -6,9 +6,12 @@
 #include <string>
 
 int main() {
-    std::string username = "user";
-    std::string password = "password";
+    std::string choice;
     std::string data;
+    std::string operation;
+    std::string username;
+    std::string password;
+    char buffer[1024];
 
     int port = 5000;
 
@@ -30,7 +33,66 @@ int main() {
 
     connect(fd, (struct sockaddr *) &addr, sizeof(addr));
 
-    char buffer[1024] = "reg;login;password";
+    std::cout << "1 - log in" << std::endl;
+    std::cout << "2 - register" << std::endl;
+    std::cout << "Chose option [1/2]: ";
+    std::cin >> choice;
+
+    if (choice == "1") {
+        std::cout << "\nuser name: ";
+        std::cin >> username;
+
+        std::cout << "password: ";
+        std::cin >> password;
+
+        data = "logIn;" + username + ";" + password;
+
+        send(fd, data.c_str(), sizeof(data)-1, 0);
+
+        int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
+        buffer[length] = '\0';
+        data = buffer;
+
+        operation = data.substr(0, data.find(";"));
+
+        if (operation == "err") {
+            std::cout << "\nError: " << data.substr(data.find(";")) << std::endl;
+        } else {
+            std::cout << "\nLog in successfully" << std::endl;
+        }
+
+    } else if (choice == "2") {
+        std::cout << "\nuser name: ";
+        std::cin >> username;
+
+        std::cout << "password: ";
+        std::cin >> password;
+
+        data = "reg;" + username + ";" + password;
+
+        send(fd, data.c_str(), sizeof(data)-1, 0);
+
+        int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
+        buffer[length] = '\0';
+        data = buffer;
+
+        operation = data.substr(0, data.find(";"));
+
+        if (operation == "err") {
+            std::cout << "\nError: " << data.substr(1, data.find(";")) << std::endl;
+        } else {
+            std::cout << "\nRegister successfully" << std::endl;
+        }
+
+    } else {
+        std::cout << "Wrong option" << std::endl;
+    }
+
+    while (true) {
+        
+    }
+
+    // buffer = "reg;login;password";
 
     data = "reg;login;password";
 

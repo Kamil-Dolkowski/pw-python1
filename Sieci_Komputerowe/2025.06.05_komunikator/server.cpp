@@ -37,13 +37,13 @@ int main() {
     // listen
     listen(fd, 10);
     
-    std::cout << "Postawiono serwer na porcie: " << port << std::endl;
+    std::cout << "Server started on port: " << port << std::endl;
 
     while (true) {
         // accept
         socklen_t addr_len = sizeof(addr);
         int fd_recv = accept(fd, (struct sockaddr *) &addr, &addr_len);
-        std::cout << "\nOdebrano połączenie od klienta" << std::endl;
+        std::cout << "\n====== NEW MESSAGE ======" << std::endl;
 
         // recv
         char buffer[1024];
@@ -51,67 +51,71 @@ int main() {
         buffer[length] = '\0';
 
         std::string data = buffer;
-        std::cout << data << std::endl;
-
         std::string operation = data.substr(0, data.find(";"));
 
-        std::cout << operation << std::endl;
-
         if (operation == "reg") {
-            std::cout << "=== REJESTRACJA ===" << std::endl;
+            std::cout << "=== REGISTRATION ===" << std::endl;
             
             if (users.find(username) == users.end()) {
                 users[username] = password;
+                std::cout << "- add new user '" << username << "'" << std::endl;
+                data = "ok";
+                send(fd_recv, data.c_str(), data.size(), 0);
             } else {
-                std::cout << "Błąd: Dany użytkownik już istnieje" << std::endl;
+                std::cout << "- error: user already exists" << std::endl;
                 data = "err";
                 send(fd_recv, data.c_str(), data.size(), 0);
             }   
-        } else if (operation == "log") {
-            std::cout << "=== LOGOWANIE ===" << std::endl;
+        } else if (operation == "logIn") {
+            std::cout << "=== LOG IN ===" << std::endl;
             
             if (users.find(username) != users.end()) {
                 if (users[username] == password) {
-                    std::cout << "Zalogowano pomyślnie" << std::endl;
+                    std::cout << "- log in successfully" << std::endl;
+                    data = "ok";
+                    send(fd_recv, data.c_str(), data.size(), 0);
                 } else {
-                    std::cout << "Błąd: Dany użytkownik nie istnieje" << std::endl;
-                    data = "err;invalid password";
+                    std::cout << "- error: wrong password" << std::endl;
+                    data = "err;wrong password";
                     send(fd_recv, data.c_str(), data.size(), 0);
                 }
             } else {
-                std::cout << "Błąd: Dany użytkownik nie istnieje" << std::endl;
-                data = "err;user already exists";
+                std::cout << "- error: user don't exists" << std::endl;
+                data = "err;user don't exists";
                 send(fd_recv, data.c_str(), data.size(), 0);
             }   
+        } else if (operation == "messAll") {
+
+        } else if (operation == "messPriv") {
+
+        } else if (operation == "logOut") {
+            // shutdown
+            shutdown(fd_recv, SHUT_WR);
+
+            // close
+            close(fd_recv);
+            std::cout << "- close connection with client" << std::endl;
+        } else {
+            std::cout << "- unknown operation" << std::endl;
         }
-        
-
-        // "reg;login;password"
-
-        // "log;login;password"
-
-        // "messAll;message"
-
-        // "messPriv;username;message"
-
 
         // send 
         send(fd_recv, data.c_str(), data.size(), 0);
-        std::cout << "Wysłano odpowiedź" << std::endl;
-        
-        // shutdown
-        shutdown(fd_recv, SHUT_WR);
-
-        // close
-        close(fd_recv);
-        std::cout << "Zakończono połączenie z klientem" << std::endl;
+        std::cout << "- send answer to client" << std::endl;
     }
     
     close(fd);
 
-    
-
-
-
     return 0;
 }
+
+
+// "reg;login;password"
+
+// "logIn;login;password"
+
+// logOut
+
+// "messAll;message"
+
+// "messPriv;username;message"
