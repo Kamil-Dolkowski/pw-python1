@@ -11,6 +11,7 @@ int main() {
     std::string operation;
     std::string username;
     std::string password;
+    std::string message;
     char buffer[1024];
 
     int port = 5000;
@@ -24,7 +25,7 @@ int main() {
         fprintf(stderr, "Error: Failed to set SO_REUSEADDR\n");
     }
 
-    // bind
+    // connect
     struct sockaddr_in addr;
     memset((char*)&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -88,8 +89,28 @@ int main() {
         std::cout << "Wrong option" << std::endl;
     }
 
+    std::cout << "\\a [message] - message to all" << std::endl;
+    std::cout << "\\p [username] [message] - priv message" << std::endl;
+    std::cout << "\\l - log out" << std::endl;
+    std::cin >> choice;
+
     while (true) {
-        
+        if (choice.substr(0,1) == "\\a") {
+            message = choice.substr(2,choice.size()-2);
+
+            data = "messAll;" + message;
+            send(fd, data.c_str(), sizeof(data)-1, 0);
+        } else if (choice.substr(0,1) == "\\p") {
+            message = choice.substr(2,choice.size()-2);
+
+            data = "messAll;" + message;
+            send(fd, data.c_str(), sizeof(data)-1, 0);
+        } else if (choice.substr(0,1) == "\\l") {
+            data = "logout";
+            send(fd, data.c_str(), sizeof(data)-1, 0);
+        } else {
+
+        }
     }
 
     // buffer = "reg;login;password";

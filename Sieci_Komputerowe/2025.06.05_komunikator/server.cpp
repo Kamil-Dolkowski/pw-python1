@@ -7,13 +7,28 @@
 #include <thread>
 #include <map>
 #include <string>
+#include <vector>
+
+// https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+std::vector<std::string> split(std::string s, std::string delimiter) {
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back (token);
+    }
+
+    res.push_back (s.substr (pos_start));
+    return res;
+}
+
 
 int main() {
-    std::map<std::string, std::string> users;
-
-    std::string username = "user";
-    std::string password = "password";
-
+    std::map<std::string, std::string> usersLogging;
+    std::map<std::string, int> users;
     int port = 5000;
 
     // socket
@@ -51,42 +66,86 @@ int main() {
         buffer[length] = '\0';
 
         std::string data = buffer;
-        std::string operation = data.substr(0, data.find(";"));
+        std::vector dataV = split(data, ";");
+
+        std::string operation = dataV[0];
+        std::string username;
+        std::string password;
+        std::string message;
 
         if (operation == "reg") {
             std::cout << "=== REGISTRATION ===" << std::endl;
             
-            if (users.find(username) == users.end()) {
-                users[username] = password;
+            username = dataV[1];
+            password = dataV[2];
+
+            if (usersLogging.find(username) == usersLogging.end()) {
+                usersLogging[username] = password;
+
                 std::cout << "- add new user '" << username << "'" << std::endl;
+
                 data = "ok";
                 send(fd_recv, data.c_str(), data.size(), 0);
             } else {
                 std::cout << "- error: user already exists" << std::endl;
+
                 data = "err";
                 send(fd_recv, data.c_str(), data.size(), 0);
             }   
         } else if (operation == "logIn") {
             std::cout << "=== LOG IN ===" << std::endl;
             
-            if (users.find(username) != users.end()) {
-                if (users[username] == password) {
+            username = dataV[1];
+            password = dataV[2];
+
+            if (usersLogging.find(username) != usersLogging.end()) {
+                if (usersLogging[username] == password) {
                     std::cout << "- log in successfully" << std::endl;
+
+                    users[username] = fd_recv;
                     data = "ok";
                     send(fd_recv, data.c_str(), data.size(), 0);
                 } else {
                     std::cout << "- error: wrong password" << std::endl;
+
                     data = "err;wrong password";
                     send(fd_recv, data.c_str(), data.size(), 0);
                 }
             } else {
-                std::cout << "- error: user don't exists" << std::endl;
-                data = "err;user don't exists";
+                std::cout << "- error: user doesn't exists" << std::endl;
+
+                data = "err;user doesn't exists";
                 send(fd_recv, data.c_str(), data.size(), 0);
             }   
         } else if (operation == "messAll") {
+            std::cout << "=== MESSAGE TO ALL ===" << std::endl;
 
+            message = dataV[1];
+            data = "<" + username + "> " + message;
+
+            for (auto& user : users) {
+                send(user.second, data.c_str(), data.size(), 0);
+            }
+
+            std::cout << "- send message to all users" << std::endl;
         } else if (operation == "messPriv") {
+            std::cout << "=== PRIVATE MESSAGE ===" << std::endl;
+
+            std::string recv_username = dataV[1];
+            message = dataV[2];
+
+            if (usersLogging.find(recv_username) != usersLogging.end()) {
+                int fd = users[recv_username];
+
+                data = "[priv] <" + username + "> " + message;
+
+                send(fd, data.c_str(), data.size(), 0);
+                std::cout << "- send private message" << std::endl;
+            } else {
+                data = "err;user doesn't exist";
+                send(fd_recv, data.c_str(), data.size(), 0);
+                std::cout << "- error: user doesn't exists" << std::endl;
+            }
 
         } else if (operation == "logOut") {
             // shutdown
