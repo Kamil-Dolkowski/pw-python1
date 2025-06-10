@@ -27,6 +27,8 @@ std::vector<std::string> split(std::string s, std::string delimiter, int max_ele
 }
 
 void logInUser(int &fd, std::string &username, std::string &password) {
+    std::string username;
+    std::string password;
     std::string data;
     std::string operation;
     char buffer[1024];
@@ -39,13 +41,11 @@ void logInUser(int &fd, std::string &username, std::string &password) {
     buffer[length] = '\0';
     data = buffer;
 
-    std::vector<std::string> dataV = split(data, ";");
+    std::vector dataV = split(data, ";");
     operation = dataV[0];
 
     if (operation == "err") {
         std::cout << "\nError: " << dataV[1] << std::endl;
-        shutdown(fd, SHUT_WR);
-        close(fd);
     } else {
         std::cout << "\nLog in successfully" << std::endl;
     }
@@ -64,7 +64,7 @@ void registerUser(int &fd, std::string &username, std::string &password) {
     buffer[length] = '\0';
     data = buffer;
 
-    std::vector<std::string> dataV = split(data, ";");
+    std::vector dataV = split(data, ";");
     operation = dataV[0];
 
     if (operation == "err") {
@@ -82,10 +82,6 @@ void getDataFromSocket(int fd) {
     while (true) {
         char buffer[1024];
         int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
-        if (length <= 0) {
-            std::cout << "\nConnection lost" << std::endl;
-            break;
-        }
         buffer[length] = '\0';
 
         data = buffer;
@@ -102,18 +98,15 @@ void getDataFromStdIn(int fd) {
     while (true) {
         std::getline(std::cin, choice);
 
-        std::vector<std::string> choiceV = split(choice, " ", 2);
+        std::vector choiceV = split(choice, " ", 2);
 
-        // Message to all active users
         if (choiceV[0] == "/a" && choiceV.size() == 2) {
             message = choiceV[1];
             
             data = "messAll;" + message;
 
             send(fd, data.c_str(), data.size(), 0);
-        } 
-        // Private message
-        if (choiceV[0] == "/p") {
+        } else if (choiceV[0] == "/p") {
             choiceV = split(choice, " ", 3);
 
             if (choiceV.size() == 3) {
@@ -123,21 +116,11 @@ void getDataFromStdIn(int fd) {
                 data = "messPriv;" + username + ";" + message;
                 send(fd, data.c_str(), data.size(), 0);
             }
-        } 
-        // Log out
-        if (choiceV[0] == "/l") {
+        } else if (choiceV[0] == "/l") {
             data = "logOut";
             send(fd, data.c_str(), data.size(), 0);
-            shutdown(fd, SHUT_WR);
             close(fd);
-
-            std::cout << "\nLog out" << std::endl;
-            break;
         } 
-        // Print list of all active users
-        if (choiceV[0] == "/u") {
-
-        }
     }
 }
 
@@ -167,26 +150,15 @@ int main() {
     struct sockaddr_in addr;
     memset((char*)&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+    addr.sin_addr.s_addr = inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
     addr.sin_port = htons(port);
 
-    int status = connect(fd, (struct sockaddr *) &addr, sizeof(addr));
-    if (status < 0) {
-        std::cout << "Error: Cannot connect to server" << std::endl;
-        return -1;
-    }
+    connect(fd, (struct sockaddr *) &addr, sizeof(addr));
 
     std::cout << "1 - log in" << std::endl;
     std::cout << "2 - register" << std::endl;
     std::cout << "Chose option [1/2]: ";
     std::cin >> choice;
-
-    if (choice != "1" && choice != "2") {
-        std::cout << "Wrong option" << std::endl;
-        shutdown(fd, SHUT_WR);
-        close(fd);
-        return -1;
-    }
 
     std::cout << "\nuser name: ";
     std::cin >> username;
@@ -196,10 +168,61 @@ int main() {
 
     if (choice == "1") {
         logInUser(fd, username, password);
-    } 
-    if (choice == "2") {
-        registerUser(fd, username, password);
-    } 
+        // std::cout << "\nuser name: ";
+        // std::cin >> username;
+
+        // std::cout << "password: ";
+        // std::cin >> password;
+
+        // data = "logIn;" + username + ";" + password;
+
+        // send(fd, data.c_str(), data.size(), 0);
+
+        // int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
+        // buffer[length] = '\0';
+        // data = buffer;
+
+        // std::vector dataV = split(data, ";");
+        // operation = dataV[0];
+
+        // if (operation == "err") {
+        //     std::cout << "\nError: " << dataV[1] << std::endl;
+        // } else {
+        //     std::cout << "\nLog in successfully" << std::endl;
+        // }
+
+    } else if (choice == "2") {
+        // std::cout << "\nuser name: ";
+        // std::cin >> username;
+
+        // std::cout << "password: ";
+        // std::cin >> password;
+
+        // data = "reg;" + username + ";" + password;
+
+        // send(fd, data.c_str(), data.size(), 0);
+
+        // int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
+        // buffer[length] = '\0';
+        // data = buffer;
+
+        // std::vector dataV = split(data, ";");
+        // operation = dataV[0];
+
+        // if (operation == "err") {
+        //     std::cout << "\nError: " << dataV[1] << std::endl;
+        // } else {
+        //     std::cout << "\nRegister successfully" << std::endl;
+
+
+        // }
+
+    } else {
+        std::cout << "Wrong option" << std::endl;
+        shutdown(fd, SHUT_WR);
+        close(fd);
+        return -1;
+    }
 
     std::cout << "\n===== COMMUNICATOR =====" << std::endl;
     std::cout << "/a [message] - message to all" << std::endl;
@@ -209,8 +232,62 @@ int main() {
     std::thread dataSocket(getDataFromSocket, fd);
     std::thread dataStdIn(getDataFromStdIn, fd);
 
-    dataSocket.join();
-    dataStdIn.join();
+    // while (true) {
+        // // Select - inicjalizacja
+        // fd_set reading, writing, except;
+
+        // struct timeval timeout;
+        // timeout.tv_sec = 1;
+        // timeout.tv_usec = 0;
+
+        // int max_sock = std::max(fileno(stdin), fd) + 1;
+        
+        // FD_ZERO( &reading );
+        // FD_ZERO( &writing );
+        // FD_ZERO( &except );
+        
+        // FD_SET( fileno(stdin), &reading );
+        // FD_SET( fd, &reading );
+
+        // // Select
+        // int rd = select(max_sock, &reading, NULL, NULL, &timeout);
+
+        // if (FD_ISSET(fileno(stdin), &reading)) {
+        //     std::getline(std::cin, choice);
+
+        //     std::vector choiceV = split(choice, " ", 2);
+
+        //     if (choiceV[0] == "/a" && choiceV.size() == 2) {
+        //         message = choiceV[1];
+                
+        //         data = "messAll;" + message;
+
+        //         send(fd, data.c_str(), data.size(), 0);
+        //     } else if (choiceV[0] == "/p") {
+        //         choiceV = split(choice, " ", 3);
+
+        //         if (choiceV.size() == 3) {
+        //             username = choiceV[1];
+        //             message = choiceV[2];
+
+        //             data = "messPriv;" + username + ";" + message;
+        //             send(fd, data.c_str(), data.size(), 0);
+        //         }
+        //     } else if (choiceV[0] == "/l") {
+        //         data = "logOut";
+        //         send(fd, data.c_str(), data.size(), 0);
+        //         close(fd);
+        //         break;
+        //     } 
+        // } else if (FD_ISSET(fd, &reading)) {
+        //     char buffer[1024];
+        //     int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
+        //     buffer[length] = '\0';
+
+        //     data = buffer;
+        //     std::cout << data << std::endl;
+        // } 
+    }
 
     close(fd);
 

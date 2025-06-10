@@ -26,14 +26,9 @@ std::vector<std::string> split(std::string s, std::string delimiter) {
 
 std::map<std::string, std::string> usersLogging;
 std::map<std::string, int> activeUsers;
-std::vector<std::thread> userThreads;
-
-std::mutex mutex;
 
 void sendListOfActiveUsers(int &fd) {
     std::string data = "\n===== ACTIVE USERS =====\n";
-
-    // std::lock_guard<std::mutex> lock(mutex);
 
     for (auto& user : activeUsers) {
         data += "- " + user.first + "\n";
@@ -43,161 +38,11 @@ void sendListOfActiveUsers(int &fd) {
 }
 
 void sendToAllUsers(std::string &data) {
-    // std::lock_guard<std::mutex> lock(mutex);
-
     for (auto& user : activeUsers) {
         send(user.second, data.c_str(), data.size(), 0);
     }
 
     std::cout << "- send message to all users" << std::endl;
-}
-
-std::string getUsernameByFd(int fd) {
-    // std::lock_guard<std::mutex> lock(mutex);
-
-    for (auto& user : activeUsers) {
-        if (user.second == fd) {
-            return user.first;
-        }
-    }
-
-    return "";
-}
-
-void userThread(int fd, int fd_recv) {
-    std::string username = "not-logged-in";
-
-    while (true) {
-        // recv
-        char buffer[1024];
-        int length = recv(fd_recv, &buffer, sizeof(buffer)-1, 0);
-
-        if (length <=0 ) {
-            std::cout << "- lost connection with user '" + username + "'" << std::endl;
-            if (username != "not-logged-in") {
-                activeUsers.erase(username);
-            }
-            break;
-        }
-        buffer[length] = '\0';
-
-        std::string data = buffer;
-        std::vector<std::string> dataV = split(data, ";");
-
-        std::string operation = dataV[0];
-        std::string password;
-        std::string message;
-
-        if (operation == "reg") {
-            std::cout << "== REGISTRATION" << std::endl;
-            
-            username = dataV[1];
-            password = dataV[2];
-
-            // std::lock_guard<std::mutex> lock(mutex);
-            if (usersLogging.find(username) == usersLogging.end()) {
-                usersLogging[username] = password;
-
-                std::cout << "- add new user '" << username << "'" << std::endl;
-
-                data = "ok";
-                send(fd_recv, data.c_str(), data.size(), 0);
-            } else {
-                std::cout << "- error: user already exists" << std::endl;
-
-                data = "err";
-                send(fd_recv, data.c_str(), data.size(), 0);
-            }   
-        } else if (operation == "logIn") {
-            std::cout << "== LOG IN" << std::endl;
-            
-            username = dataV[1];
-            password = dataV[2];
-
-            // std::lock_guard<std::mutex> lock(mutex);
-            if (usersLogging.find(username) != usersLogging.end()) {
-                if (activeUsers.find(username) != activeUsers.end()) {
-                    std::cout << "Error: user '" + username + "'is already logged in" << std::endl;
-
-                    data = "err;user '" + username + "'is already logged in";
-                    send(fd_recv, data.c_str(), data.size(), 0);
-                } else if (usersLogging[username] == password) {
-                    std::cout << "- user '" + username + "'logged in successfully" << std::endl;
-
-                    activeUsers[username] = fd_recv;
-                    data = "ok";
-                    send(fd_recv, data.c_str(), data.size(), 0);
-                    sendListOfActiveUsers(fd_recv);
-
-                    data = "User '" + username + "' was joined the chat";
-                    sendToAllUsers(data);
-                } else {
-                    std::cout << "- error: wrong password" << std::endl;
-
-                    data = "err;wrong password";
-                    send(fd_recv, data.c_str(), data.size(), 0);
-                }
-            } else {
-                std::cout << "- error: user doesn't exists" << std::endl;
-
-                data = "err;user doesn't exists";
-                send(fd_recv, data.c_str(), data.size(), 0);
-            }   
-        } else if (operation == "messAll") {
-            std::cout << "== MESSAGE TO ALL" << std::endl;
-
-            // std::lock_guard<std::mutex> lock(mutex);
-            for (auto& user : activeUsers) {
-                if (user.second == fd_recv) {
-                    username = user.first;
-                }
-            }
-
-            message = dataV[1];
-            data = "<" + username + "> " + message;
-
-            sendToAllUsers(data);
-        } else if (operation == "messPriv") {
-            std::cout << "== PRIVATE MESSAGE" << std::endl;
-
-            std::string recv_username = dataV[1];
-            message = dataV[2];
-
-            // std::lock_guard<std::mutex> lock(mutex);
-            for (auto& user : activeUsers) {
-                if (user.second == fd_recv) {
-                    username = user.first;
-                }
-            }
-
-            if (usersLogging.find(recv_username) != usersLogging.end()) {
-                int fd_priv = activeUsers[recv_username];
-
-                data = "[priv] <" + username + "> " + message;
-
-                send(fd_priv, data.c_str(), data.size(), 0);
-                std::cout << "- send private message" << std::endl;
-            } else {
-                data = "err;user doesn't exist";
-                send(fd_recv, data.c_str(), data.size(), 0);
-                std::cout << "- error: user doesn't exists" << std::endl;
-            }
-
-        } else if (operation == "logOut") {
-            std::cout << "- log out user '" + username +"'" << std::endl;
-
-            data = "User '" + username + "' was left the chat";
-            sendToAllUsers(data);
-
-            // shutdown
-            shutdown(fd_recv, SHUT_WR);
-
-            // close
-            close(fd_recv);
-            std::cout << "- close connection with client" << std::endl;
-            break;
-        } 
-    }
 }
 
 int main() {
@@ -226,20 +71,117 @@ int main() {
     
     std::cout << "Server started on port: " << port << std::endl;
 
+    // accept
+    socklen_t addr_len = sizeof(addr);
+    int fd_recv = accept(fd, (struct sockaddr *) &addr, &addr_len);
+    std::cout << "\n====== NEW USER ======" << std::endl;
+
     while (true) {
-        // accept
-        socklen_t addr_len = sizeof(addr);
-        int fd_recv = accept(fd, (struct sockaddr *) &addr, &addr_len);
+        // recv
+        char buffer[1024];
+        int length = recv(fd_recv, &buffer, sizeof(buffer)-1, 0);
+        buffer[length] = '\0';
 
-        std::cout << "\n== NEW CONNECTION" << std::endl;
-        if (fd_recv >= 0) {
-            userThreads.push_back(std::thread(userThread, fd, fd_recv));
-        }
+        std::string data = buffer;
+        std::vector<std::string> dataV = split(data, ";");
 
-    }
+        std::string operation = dataV[0];
+        std::string username;
+        std::string password;
+        std::string message;
 
-    for (auto& userThread : userThreads) {
-        userThread.join();
+        if (operation == "reg") {
+            std::cout << "=== REGISTRATION ===" << std::endl;
+            
+            username = dataV[1];
+            password = dataV[2];
+
+            if (usersLogging.find(username) == usersLogging.end()) {
+                usersLogging[username] = password;
+
+                std::cout << "- add new user '" << username << "'" << std::endl;
+
+                data = "ok";
+                send(fd_recv, data.c_str(), data.size(), 0);
+            } else {
+                std::cout << "- error: user already exists" << std::endl;
+
+                data = "err";
+                send(fd_recv, data.c_str(), data.size(), 0);
+            }   
+        } else if (operation == "logIn") {
+            std::cout << "=== LOG IN ===" << std::endl;
+            
+            username = dataV[1];
+            password = dataV[2];
+
+            if (usersLogging.find(username) != usersLogging.end()) {
+                if (usersLogging[username] == password) {
+                    std::cout << "- log in successfully" << std::endl;
+
+                    activeUsers[username] = fd_recv;
+                    data = "ok";
+                    send(fd_recv, data.c_str(), data.size(), 0);
+                    sendListOfActiveUsers(fd_recv);
+                } else {
+                    std::cout << "- error: wrong password" << std::endl;
+
+                    data = "err;wrong password";
+                    send(fd_recv, data.c_str(), data.size(), 0);
+                }
+            } else {
+                std::cout << "- error: user doesn't exists" << std::endl;
+
+                data = "err;user doesn't exists";
+                send(fd_recv, data.c_str(), data.size(), 0);
+            }   
+        } else if (operation == "messAll") {
+            std::cout << "=== MESSAGE TO ALL ===" << std::endl;
+
+            for (auto& user : activeUsers) {
+                if (user.second == fd_recv) {
+                    username = user.first;
+                }
+            }
+
+            message = dataV[1];
+            data = "<" + username + "> " + message;
+
+            sendToAllUsers(data);
+        } else if (operation == "messPriv") {
+            std::cout << "=== PRIVATE MESSAGE ===" << std::endl;
+
+            std::string recv_username = dataV[1];
+            message = dataV[2];
+
+            for (auto& user : activeUsers) {
+                if (user.second == fd_recv) {
+                    username = user.first;
+                }
+            }
+
+            if (usersLogging.find(recv_username) != usersLogging.end()) {
+                int fd_priv = activeUsers[recv_username];
+
+                data = "[priv] <" + username + "> " + message;
+
+                send(fd_priv, data.c_str(), data.size(), 0);
+                std::cout << "- send private message" << std::endl;
+            } else {
+                data = "err;user doesn't exist";
+                send(fd_recv, data.c_str(), data.size(), 0);
+                std::cout << "- error: user doesn't exists" << std::endl;
+            }
+
+        } else if (operation == "logOut") {
+            // shutdown
+            shutdown(fd_recv, SHUT_WR);
+
+            // close
+            close(fd_recv);
+            std::cout << "- close connection with client" << std::endl;
+            break;
+        } 
     }
     
     close(fd);
