@@ -83,45 +83,67 @@ int main() {
             std::cout << "\nError: " << data.substr(1, data.find(";")) << std::endl;
         } else {
             std::cout << "\nRegister successfully" << std::endl;
+
+            data = "logIn;" + username + ";" + password;
+            send(fd, data.c_str(), sizeof(data)-1, 0);
+            std::cout << "Log in successfully" << std::endl;
         }
 
     } else {
         std::cout << "Wrong option" << std::endl;
     }
 
-    std::cout << "\\a [message] - message to all" << std::endl;
-    std::cout << "\\p [username] [message] - priv message" << std::endl;
-    std::cout << "\\l - log out" << std::endl;
-    std::cin >> choice;
+    std::cout << "\n===== COMMUNICATOR =====" << std::endl;
+    std::cout << "/a [message] - message to all" << std::endl;
+    std::cout << "/p [username] [message] - priv message" << std::endl;
+    std::cout << "/l - log out\n" << std::endl;
+
+    // Select - inicjalizacja
+    fd_set reading, writing, except;
+    struct timeval timeout;
+    int max_sock;
+    
+    FD_ZERO( &reading );
+    FD_ZERO( &writing );
+    FD_ZERO( &except );
+    
+    FD_SET( fileno(stdin), &reading );
+    FD_SET( fd, &reading );
 
     while (true) {
-        if (choice.substr(0,1) == "\\a") {
-            message = choice.substr(2,choice.size()-2);
+        int rd = select(max_sock, &reading, &writing, &except, &timeout);
 
-            data = "messAll;" + message;
-            send(fd, data.c_str(), sizeof(data)-1, 0);
-        } else if (choice.substr(0,1) == "\\p") {
-            message = choice.substr(2,choice.size()-2);
+        if (FD_ISSET(fileno(stdin), &reading)) {
+            if (choice.substr(0,2) == "/a") {
+                // message = choice.substr(2,choice.size()-2);
+                message = "test";
 
-            data = "messAll;" + message;
-            send(fd, data.c_str(), sizeof(data)-1, 0);
-        } else if (choice.substr(0,1) == "\\l") {
-            data = "logout";
-            send(fd, data.c_str(), sizeof(data)-1, 0);
+                data = "messAll;" + message;
+                send(fd, data.c_str(), sizeof(data)-1, 0);
+            } else if (choice.substr(0,2) == "/p") {
+                message = choice.substr(2,choice.size()-2);
+
+                data = "messAll;" + message;
+                send(fd, data.c_str(), sizeof(data)-1, 0);
+            } else if (choice.substr(0,2) == "/l") {
+                data = "logOut";
+                send(fd, data.c_str(), sizeof(data)-1, 0);
+                close(fd);
+                break;
+            } else {
+
+            }
+        } else if (FD_ISSET(fd, &reading)) {
+            recv(fd, &buffer, sizeof(buffer)-1, 0);
+            data = buffer;
+
+            std::cout << data << std::endl;
         } else {
 
         }
+
+       
     }
-
-    // buffer = "reg;login;password";
-
-    data = "reg;login;password";
-
-    send(fd, &buffer, sizeof(buffer)-1, 0);
-
-    data = "log;login;password";
-
-    send(fd, data.c_str(), sizeof(buffer)-1, 0);
 
     close(fd);
 

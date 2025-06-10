@@ -54,12 +54,12 @@ int main() {
     
     std::cout << "Server started on port: " << port << std::endl;
 
-    while (true) {
-        // accept
-        socklen_t addr_len = sizeof(addr);
-        int fd_recv = accept(fd, (struct sockaddr *) &addr, &addr_len);
-        std::cout << "\n====== NEW MESSAGE ======" << std::endl;
+    // accept
+    socklen_t addr_len = sizeof(addr);
+    int fd_recv = accept(fd, (struct sockaddr *) &addr, &addr_len);
+    std::cout << "\n====== NEW MESSAGE ======" << std::endl;
 
+    while (true) {
         // recv
         char buffer[1024];
         int length = recv(fd_recv, &buffer, sizeof(buffer)-1, 0);
@@ -154,6 +154,7 @@ int main() {
             // close
             close(fd_recv);
             std::cout << "- close connection with client" << std::endl;
+            break;
         } else {
             std::cout << "- unknown operation" << std::endl;
         }
@@ -164,6 +165,7 @@ int main() {
     }
     
     close(fd);
+    std::cout << "\nServer turned off" << std::endl;
 
     return 0;
 }
