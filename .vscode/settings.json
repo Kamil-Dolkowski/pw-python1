@@ -64,7 +64,11 @@
         "mutex": "cpp",
         "list": "cpp",
         "chrono": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "charconv": "cpp",
+        "format": "cpp",
+        "span": "cpp",
+        "variant": "cpp"
     }
 } // {
 //     "files.associations": {
