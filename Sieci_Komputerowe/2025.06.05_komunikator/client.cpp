@@ -5,6 +5,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <thread>
+#include <csignal>
 #include <vector>
 
 // https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
@@ -26,7 +27,13 @@ std::vector<std::string> split(std::string s, std::string delimiter, int max_ele
     return res;
 }
 
-void logInUser(int &fd, std::string &username, std::string &password) {
+volatile sig_atomic_t stop = 0;
+
+void handle_sigint(int signal) {
+    stop = 1;
+}
+
+bool logInUser(int &fd, std::string &username, std::string &password) {
     std::string data;
     std::string operation;
     char buffer[1024];
@@ -46,8 +53,10 @@ void logInUser(int &fd, std::string &username, std::string &password) {
         std::cout << "\nError: " << dataV[1] << std::endl;
         shutdown(fd, SHUT_WR);
         close(fd);
+        return false;
     } else {
         std::cout << "\nLog in successfully" << std::endl;
+        return true;
     }
 }
 
@@ -79,17 +88,24 @@ void registerUser(int &fd, std::string &username, std::string &password) {
 void getDataFromSocket(int fd) {
     std::string data;
 
-    while (true) {
+    while (stop != 1) {
         char buffer[1024];
         int length = recv(fd, &buffer, sizeof(buffer)-1, 0);
         if (length <= 0) {
             std::cout << "\nConnection lost" << std::endl;
+            stop = 1;
             break;
         }
         buffer[length] = '\0';
 
         data = buffer;
-        std::cout << data << std::endl;
+        std::vector<std::string> dataV = split(data, ";");
+
+        if (dataV[0] == "err") {
+            std::cout << "(!) Error: " + dataV[1] << std::endl;
+        } else {
+            std::cout << data << std::endl;
+        }
     }
 }
 
@@ -99,7 +115,7 @@ void getDataFromStdIn(int fd) {
     std::string message;
     std::string data;
 
-    while (true) {
+    while (stop != 1) {
         std::getline(std::cin, choice);
 
         std::vector<std::string> choiceV = split(choice, " ", 2);
@@ -136,7 +152,8 @@ void getDataFromStdIn(int fd) {
         } 
         // Print list of all active users
         if (choiceV[0] == "/u") {
-
+            data = "allUsers";
+            send(fd, data.c_str(), data.size(), 0);
         }
     }
 }
@@ -172,7 +189,7 @@ int main() {
 
     int status = connect(fd, (struct sockaddr *) &addr, sizeof(addr));
     if (status < 0) {
-        std::cout << "Error: Cannot connect to server" << std::endl;
+        std::cout << "\nError: Cannot connect to server" << std::endl;
         return -1;
     }
 
@@ -195,7 +212,10 @@ int main() {
     std::cin >> password;
 
     if (choice == "1") {
-        logInUser(fd, username, password);
+        bool loggedIn = logInUser(fd, username, password);
+        if (loggedIn == false) {
+            return -1;
+        }
     } 
     if (choice == "2") {
         registerUser(fd, username, password);
@@ -204,7 +224,10 @@ int main() {
     std::cout << "\n===== COMMUNICATOR =====" << std::endl;
     std::cout << "/a [message] - message to all" << std::endl;
     std::cout << "/p [username] [message] - priv message" << std::endl;
-    std::cout << "/l - log out\n" << std::endl;
+    std::cout << "/u - active users" << std::endl;
+    std::cout << "/l - log out" << std::endl;
+
+    std::signal(SIGINT, handle_sigint);
 
     std::thread dataSocket(getDataFromSocket, fd);
     std::thread dataStdIn(getDataFromStdIn, fd);

@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <mutex>
 #include <thread>
+#include <csignal>
 #include <map>
 #include <vector>
 
@@ -24,7 +25,13 @@ std::vector<std::string> split(std::string s, std::string delimiter) {
     return res;
 }
 
-std::map<std::string, std::string> usersLogging;
+volatile sig_atomic_t stop = 0;
+
+void handle_sigint(int signal) {
+    stop = 1;
+}
+
+std::map<std::string, std::string> registeredUsers;
 std::map<std::string, int> activeUsers;
 std::vector<std::thread> userThreads;
 
@@ -33,7 +40,7 @@ std::mutex mutex;
 void sendListOfActiveUsers(int &fd) {
     std::string data = "\n===== ACTIVE USERS =====\n";
 
-    // std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
 
     for (auto& user : activeUsers) {
         data += "- " + user.first + "\n";
@@ -42,18 +49,23 @@ void sendListOfActiveUsers(int &fd) {
     send(fd, data.c_str(), data.size(), 0);
 }
 
-void sendToAllUsers(std::string &data) {
-    // std::lock_guard<std::mutex> lock(mutex);
+void sendToAllUsers(std::string &data, std::string username = "") {
+    std::lock_guard<std::mutex> lock(mutex);
 
     for (auto& user : activeUsers) {
         send(user.second, data.c_str(), data.size(), 0);
     }
 
-    std::cout << "- send message to all users" << std::endl;
+    if (username != "") {
+        std::cout << "- user '" + username + "' send message to all users" << std::endl;
+    } else {
+        std::cout << "- send message to all users" << std::endl;
+    }
+    
 }
 
 std::string getUsernameByFd(int fd) {
-    // std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
 
     for (auto& user : activeUsers) {
         if (user.second == fd) {
@@ -64,8 +76,9 @@ std::string getUsernameByFd(int fd) {
     return "";
 }
 
-void userThread(int fd, int fd_recv) {
-    std::string username = "not-logged-in";
+void userThread(int fd_recv) {
+    std::string username;
+    bool isLoggedIn = false;
 
     while (true) {
         // recv
@@ -73,9 +86,15 @@ void userThread(int fd, int fd_recv) {
         int length = recv(fd_recv, &buffer, sizeof(buffer)-1, 0);
 
         if (length <=0 ) {
+            if (!isLoggedIn) {
+                username = "not-logged-in";
+            }
             std::cout << "- lost connection with user '" + username + "'" << std::endl;
-            if (username != "not-logged-in") {
+            if (isLoggedIn) {
+                std::lock_guard<std::mutex> lock(mutex);
                 activeUsers.erase(username);
+                close(fd_recv);
+                std::cout << "- user '" + username + "' deactivated" << std::endl;
             }
             break;
         }
@@ -89,14 +108,14 @@ void userThread(int fd, int fd_recv) {
         std::string message;
 
         if (operation == "reg") {
-            std::cout << "== REGISTRATION" << std::endl;
+            // std::cout << "== REGISTRATION" << std::endl;
             
             username = dataV[1];
             password = dataV[2];
 
-            // std::lock_guard<std::mutex> lock(mutex);
-            if (usersLogging.find(username) == usersLogging.end()) {
-                usersLogging[username] = password;
+            std::lock_guard<std::mutex> lock(mutex);
+            if (registeredUsers.find(username) == registeredUsers.end()) {
+                registeredUsers[username] = password;
 
                 std::cout << "- add new user '" << username << "'" << std::endl;
 
@@ -109,21 +128,22 @@ void userThread(int fd, int fd_recv) {
                 send(fd_recv, data.c_str(), data.size(), 0);
             }   
         } else if (operation == "logIn") {
-            std::cout << "== LOG IN" << std::endl;
+            // std::cout << "== LOG IN" << std::endl;
             
             username = dataV[1];
             password = dataV[2];
 
             // std::lock_guard<std::mutex> lock(mutex);
-            if (usersLogging.find(username) != usersLogging.end()) {
+            if (registeredUsers.find(username) != registeredUsers.end()) {
                 if (activeUsers.find(username) != activeUsers.end()) {
-                    std::cout << "Error: user '" + username + "'is already logged in" << std::endl;
+                    std::cout << "Error: user '" + username + "' is already logged in" << std::endl;
 
                     data = "err;user '" + username + "'is already logged in";
                     send(fd_recv, data.c_str(), data.size(), 0);
-                } else if (usersLogging[username] == password) {
-                    std::cout << "- user '" + username + "'logged in successfully" << std::endl;
+                } else if (registeredUsers[username] == password) {
+                    std::cout << "- user '" + username + "' logged in successfully" << std::endl;
 
+                    isLoggedIn = true;
                     activeUsers[username] = fd_recv;
                     data = "ok";
                     send(fd_recv, data.c_str(), data.size(), 0);
@@ -144,47 +164,38 @@ void userThread(int fd, int fd_recv) {
                 send(fd_recv, data.c_str(), data.size(), 0);
             }   
         } else if (operation == "messAll") {
-            std::cout << "== MESSAGE TO ALL" << std::endl;
-
-            // std::lock_guard<std::mutex> lock(mutex);
-            for (auto& user : activeUsers) {
-                if (user.second == fd_recv) {
-                    username = user.first;
-                }
-            }
+            // std::cout << "== MESSAGE TO ALL" << std::endl;
 
             message = dataV[1];
             data = "<" + username + "> " + message;
 
-            sendToAllUsers(data);
+            sendToAllUsers(data, username);
         } else if (operation == "messPriv") {
-            std::cout << "== PRIVATE MESSAGE" << std::endl;
+            // std::cout << "== PRIVATE MESSAGE" << std::endl;
 
             std::string recv_username = dataV[1];
             message = dataV[2];
 
-            // std::lock_guard<std::mutex> lock(mutex);
-            for (auto& user : activeUsers) {
-                if (user.second == fd_recv) {
-                    username = user.first;
-                }
-            }
+            std::lock_guard<std::mutex> lock(mutex);
 
-            if (usersLogging.find(recv_username) != usersLogging.end()) {
+            if (activeUsers.find(recv_username) != activeUsers.end()) {
                 int fd_priv = activeUsers[recv_username];
 
                 data = "[priv] <" + username + "> " + message;
 
                 send(fd_priv, data.c_str(), data.size(), 0);
-                std::cout << "- send private message" << std::endl;
+                std::cout << "- user '" + username + "' send private message to user '" + recv_username + "'" << std::endl;
             } else {
-                data = "err;user doesn't exist";
+                data = "err;user '" + recv_username + "' doesn't exist or isn't active";
                 send(fd_recv, data.c_str(), data.size(), 0);
-                std::cout << "- error: user doesn't exists" << std::endl;
+                std::cout << "- error: user '" + recv_username + "' doesn't exists or isn't active" << std::endl;
             }
 
         } else if (operation == "logOut") {
             std::cout << "- log out user '" + username +"'" << std::endl;
+            mutex.lock();
+            activeUsers.erase(username);
+            mutex.unlock();
 
             data = "User '" + username + "' was left the chat";
             sendToAllUsers(data);
@@ -194,9 +205,11 @@ void userThread(int fd, int fd_recv) {
 
             // close
             close(fd_recv);
-            std::cout << "- close connection with client" << std::endl;
+            std::cout << "- close connection with client (user '" + username + "')" << std::endl;
             break;
-        } 
+        } else if (operation == "allUsers") {
+            sendListOfActiveUsers(fd_recv);
+        }
     }
 }
 
@@ -231,17 +244,22 @@ int main() {
         socklen_t addr_len = sizeof(addr);
         int fd_recv = accept(fd, (struct sockaddr *) &addr, &addr_len);
 
-        std::cout << "\n== NEW CONNECTION" << std::endl;
+        std::cout << "== NEW CONNECTION" << std::endl;
         if (fd_recv >= 0) {
-            userThreads.push_back(std::thread(userThread, fd, fd_recv));
-        }
+            userThreads.push_back(std::thread(userThread, fd_recv));
+        } 
 
+    }
+
+    for (auto& user : activeUsers) {
+        shutdown(user.second, SHUT_WR);
+        close(user.second);
     }
 
     for (auto& userThread : userThreads) {
         userThread.join();
     }
-    
+
     close(fd);
     std::cout << "\nServer turned off" << std::endl;
 
@@ -258,3 +276,5 @@ int main() {
 // "messAll;message"
 
 // "messPriv;username;message"
+
+// allUsers

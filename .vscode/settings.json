@@ -63,7 +63,8 @@
         "condition_variable": "cpp",
         "mutex": "cpp",
         "list": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "csignal": "cpp"
     }
 } // {
 //     "files.associations": {
