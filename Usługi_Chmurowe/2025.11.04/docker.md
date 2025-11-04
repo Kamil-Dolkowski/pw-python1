@@ -125,32 +125,32 @@ docker run -it alpine sh
 docker run -it --name kontener1 alpine sh
 
 # Sposób 2
-sudo docker start kontener2
-sudo docker attach kontener2
+docker start kontener2
+docker attach kontener2
 ```
 
 -it -> interakcja (wersja terminalowa)
 
 ## Historia kontenera
 ```bash
-sudo docker image history nginx:latest
+docker image history nginx:latest
 
-sudo docker pull nginx:latest
-sudo docker image history nginx:latest
+docker pull nginx:latest
+docker image history nginx:latest
 ```
 
 docker.io/library/ubuntu:22.02
 
 myapp:v1.0.0
 
-# Pobieranie Postgres'a
+## Pobieranie Postgres'a
 ```bash
 # 1
-sudo docker run -d --name db-test \
+docker run -d --name db-test \
 > -e POSTGRES_PASSWORD=secret \
 > postgres:15-alpine
 
-sudo docker exec -it db-test psql -U postgres
+docker exec -it db-test psql -U postgres
 
 CREATE TABLE users (id INT, NAME VARCHAR(50));
 INSERT INTO users VALUES (1, 'Alicja'), (2, 'Jan');
@@ -158,19 +158,19 @@ SELECT * FROM users;
 \q
 
 # 2
-sudo docker stop db-test
-sudo docker rm db-test
+docker stop db-test
+docker rm db-test
 
-sudo docker run -d --name db-test -e POSTGRES_PASSWORD=secret postgres:15-alpine
-sudo docker exec -it db-test psql -U postgres
+docker run -d --name db-test -e POSTGRES_PASSWORD=secret postgres:15-alpine
+docker exec -it db-test psql -U postgres
 
 SELECT * FROM users;
 # Brak tabeli
 
 # 3 - Utworzenie wolumenu dla dockera
-sudo docker volume create postgres-data
-sudo docker start db-test
-sudo docker exec -it db-test sh
+docker volume create postgres-data
+docker start db-test
+docker exec -it db-test sh
 
 psql -U postgres
 SHOW config_file;
@@ -181,25 +181,25 @@ ls -la /var/lib/postgresql/data/
 
 sudo docker run -d --name db-persistent -e POSTGRES_PASSWORD=secret -v postgres-data:/var/lib/postgresql/data postgres:15-alpine
 
-sudo docker volume ls
-sudo docker exec -it db-persistent psql -U postgres
+docker volume ls
+docker exec -it db-persistent psql -U postgres
 
 CREATE TABLE users (id INT, NAME VARCHAR(50));
 INSERT INTO users VALUES (1, 'Alicja'), (2, 'Krzysztof');
 SELECT * FROM users;
 
-sudo docker stop db-persistent
-sudo docker rm db-persistent
-sudo docker run -d --name db-persistent -e POSTGRES_PASSWORD=secret -v postgres-data:/var/lib/postgresql/data postgres:15-alpine
-sudo docker exec -it db-persistent psql -U postgres
+docker stop db-persistent
+docker rm db-persistent
+docker run -d --name db-persistent -e POSTGRES_PASSWORD=secret -v postgres-data:/var/lib/postgresql/data postgres:15-alpine
+docker exec -it db-persistent psql -U postgres
 SELECT * FROM users;
 
-sudo docker volume inspect postgres-data
+docker volume inspect postgres-data
 
-sudo docker volume rm postgres-data
-sudo docker stop db-persistent
-sudo docker rm db-persistent
-sudo docker volume rm postgres-data
+docker volume rm postgres-data
+docker stop db-persistent
+docker rm db-persistent
+docker volume rm postgres-data
 ```
 
 -d -> detach (w tle)
@@ -214,11 +214,149 @@ echo "<h1>Hello from host</h1>" > docker-test/index.html
 cat docker-test/index.html
 
 # Utworzenie kontenera
-sudo docker run -d --name web-test -p 8080:80 -v ~/docker-test:/usr/share/nginx/html nginx:alpine
+docker run -d --name web-test -p 8080:80 -v ~/docker-test:/usr/share/nginx/html nginx:alpine
 # localhost:8080
 echo "<h3>Update from host</h3>" >> index.html
 # localhost:8080
 
-sudo docker stop web-test && sudo docker rm web-test
-sudo docker stop db-test && sudo docker rm db-test
+docker stop web-test && sudo docker rm web-test
+docker stop db-test && sudo docker rm db-test
+```
+
+## Podpięcie sieci
+```bash
+docker network
+
+# Utworzenie sieci
+docker network create myapp-network
+
+docker run -d --name database --network myapp-network -e POSTGRES_PASSWORD=secret postgres:15-alpine
+docker run -it --rm --network myapp-network alpine sh
+
+ping database
+apk add postgresql-client
+psql -U postgres -h database
+SHOW hba_file;
+
+docker stop database
+docker rm database
+docker network rm myapp-network
+```
+
+### Typy sieci:
+- bridge
+- host
+- none
+- overlay (docker swarm, kubernetes)
+- ip vlan
+- mac ?
+
+&nbsp;
+
+# Przykład - Utworzenie Bloga
+
+```bash
+docker network create blognet
+docker volume create blog-data
+
+docker run -d --name blog-db --network blognet -v blog-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret123 -e POSTGRES_DB=blogdb -e POSTGRES_USER=blogger postgres:15-alpine
+
+docker run -d --name blog-app --network blognet -p 8080:80 -e WORDPRESS_DB_HOST=blog-db:5432 -e WORDPRESS_DB_USER=blogger -e WORDPRESS_DB_PASSWORD=secret123 -e WORDPRESS_DB_NAME=blogdb wordpress:latest
+
+# (Wordpress nie działa z postgresem)
+docker stop blog-db && docker rm blog-db
+
+docker run -d --name blog-db --network blognet -v blog-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=blog-db -e MYSQL_USER=blogger -e MYSQL_PASSWORD=secret123 mysql:8.0
+
+docker stop blog-app
+docker rm blog-app
+docker rm blog-db
+
+# Od nowa
+docker volume create blog-data
+docker run -d --name blog-db --network blognet -v blog-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=blog-db -e MYSQL_USER=blogger -e MYSQL_PASSWORD=secret123 mysql:8.0
+
+docker rm blog-db
+docker run -d --name blog-db --network blognet -v blog-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=blog-db -e MYSQL_USER=blogger -e MYSQL_PASSWORD=secret123 mysql:latest
+
+# ....
+```
+
+**^ źle (na zajęciach)**
+
+```bash
+docker network create blognet
+docker volume create blog-data
+
+docker run -d --name blog-db --network blognet -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=blogdb -e MYSQL_USER=blogger -e MYSQL_PASSWORD=secret123 mysql:latest
+
+docker run -d --name blog-app --network blognet -p 8080:80 -e WORDPRESS_DB_HOST=blog-db -e WORDPRESS_DB_USER=blogger -e WORDPRESS_DB_PASSWORD=secret123 -e WORDPRESS_DB_NAME=blogdb wordpress:latest
+```
+
+**^ dobrze (ale brak podpięcia do woluminu :/)**
+
+# 
+
+```bash
+docker image inspect wordpress:latest
+
+# -P - (jawne?) losowe porty
+docker run -d -P nginx:latest
+
+docker run -d -p 8001:80 nginx:latest
+curl http://localhost:8001
+
+# Informacje o portach danej aplikacji
+docker port blog-app
+
+# Informacje o zmiennych środowiskowych danej aplikacji
+docker exec blog-db env
+
+# Łączenie z aplikacją
+docker exec -it blog-db mysql -uroot -prootpass
+
+# Plik ze zmiennymi środowiskowymi
+nano app.env
+
+APP_ENV=production
+APP_DEBUG=false
+APP_PORT=3000
+DATABASE_HOST=db
+DATABASE_PORT=5432
+
+docker run -d --name app-test --env-file app.env alpine sleep 3600
+docker exec app-test env | grep APP
+
+# Aplikacja z ograniczoną pamięcią i CPU
+docker run -d --name app-limit --memory="512m" --cpus="0.5" nginx:alpine
+
+docker stats app-limit --no-stream
+
+# Logs
+docker logs f5c89e3c27c4
+docker logs -f f5c89e3c27c4
+docker logs --tail 10 app-limit
+docker logs -t app-limit
+docker top app-limit
+
+docker exec -it app-limit sh
+ps aux
+netstat -tulpn
+ls -la /usr/share/nginx/html/
+
+# Docker cp
+docker cp app.env app-limit:/usr/share/nginx/html/
+
+docker ps 
+docker ps -a
+
+docker system df 
+
+# Czyszczenie
+docker container prune
+docker rmi -f nginx:alpine
+docker image prune -a
+docker volume prune
+docker network prune
+docker system prune -a --volumes
 ```
